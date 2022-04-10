@@ -2,7 +2,7 @@
   <section class="section">
     <b-field>
       <b-input
-        placeholder="https://www.wikipedia.org..."
+        placeholder="https://github.com/flowko..."
         type="url"
         v-model="params.url"
         expanded
@@ -21,7 +21,7 @@
     <div class="columns">
       <div class="column is-5">
         <div class="box bg-blueGray-900">
-          <p class="title is-5">Browser options</p>
+          <p class="title is-5">⚛️ Browser options</p>
 
           <b-field>
             <b-switch v-model="params.crop" type="is-danger">
@@ -34,7 +34,7 @@
             </b-switch>
           </b-field>
 
-          <b-field label="Resolutions">
+          <b-field label="Resolutions:">
             <b-select
               v-model="params.size"
               expanded
@@ -56,7 +56,19 @@
             </b-select>
           </b-field>
 
-          <label class="label">Width</label>
+          <div class="mt-4 columns">
+            <label class="label column">Delay in seconds:</label>
+            <b-input
+              class="column is-4"
+              rounded
+              type="number"
+              min="1"
+              max="15"
+              v-model="params.delay"
+            ></b-input>
+          </div>
+
+          <label class="label">Width:</label>
           <div class="columns">
             <div class="column">
               <b-field>
@@ -76,7 +88,8 @@
               v-model="params.width"
             ></b-input>
           </div>
-          <label class="label">Height</label>
+
+          <label class="label">Height:</label>
           <div class="columns">
             <div class="column">
               <b-field>
@@ -102,9 +115,9 @@
             {{ params.width }} x {{ params.height }} px
           </p>
 
-          <p class="mt-4 title is-5">Image options</p>
+          <p class="mt-4 title is-5">⚙️ Image options</p>
 
-          <b-field label="Format">
+          <b-field label="Format:">
             <b-select
               expanded
               placeholder="Select a format"
@@ -120,7 +133,7 @@
             </b-select>
           </b-field>
 
-          <label class="label">Scale</label>
+          <label class="label">Scale:</label>
           <div class="columns">
             <div class="column">
               <b-field>
@@ -179,7 +192,7 @@ export default {
   data() {
     return {
       params: {
-        url: "https://github.com/flowko",
+        url: null,
         size: "1920x1080",
         crop: true,
         darkMode: false,
@@ -189,7 +202,7 @@ export default {
         height: 1080,
         scale: 100,
       },
-      imageFormats: ["png", "jpeg"],
+      imageFormats: ["png", "jpeg", "webp"],
       result: null,
       loading: false,
       resolutions: [
