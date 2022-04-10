@@ -2,7 +2,7 @@
 
 
 
-Generate a full web-page screenshot with our service Site-Shot: Web page screenshot service, that provides rich interface to make any kind of web screenshots online for free with no limits. The simplest way to take a full page screenshot, we support a long pages up to 20000 pixels
+Generate a full web-page screenshot with our service, that provides rich interface to make any kind of web screenshots online for free with no limits. The simplest way to take a full page screenshot, we support a long pages up to 20000 pixels
 
 [🔗 View it here]()
 
