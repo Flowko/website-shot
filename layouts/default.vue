@@ -1,75 +1,57 @@
 <template>
-  <div>
+  <div class="font-serif text-white">
     <nav
-      class="navbar header has-shadow is-primary"
+      class="navbar header has-shadow is-danger"
       role="navigation"
       aria-label="main navigation"
     >
-      <div class="navbar-brand">
-        <a
-          class="navbar-item"
-          href="/"
-        >
-          <img
-            src="~assets/buefy.png"
-            alt="Buefy"
-            height="28"
-          >
-        </a>
-
-        <div class="navbar-burger">
-          <span />
-          <span />
-          <span />
+      <div class="container">
+        <div class="py-0 section navbar-brand">
+          <a class="navbar-item" href="/">
+            <b-icon icon="camera"> </b-icon>
+            <h1 class="ml-4 text-xl font-semibold uppercase">Website Shot</h1>
+          </a>
         </div>
       </div>
     </nav>
 
-    <section class="main-content columns">
-      <aside class="column is-2 section">
-        <p class="menu-label is-hidden-touch">
-          General
-        </p>
-        <ul class="menu-list">
-          <li
-            v-for="(item, key) of items"
-            :key="key"
-          >
-            <NuxtLink
-              :to="item.to"
-              exact-active-class="is-active"
-            >
-              <b-icon :icon="item.icon" /> {{ item.title }}
-            </NuxtLink>
-          </li>
-        </ul>
-      </aside>
-
-      <div class="container column is-10">
-        <Nuxt />
-      </div>
-    </section>
+    <div class="container">
+      <Nuxt />
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'DefaultLayout',
-  data () {
+  name: "DefaultLayout",
+  data() {
     return {
       items: [
         {
-          title: 'Home',
-          icon: 'home',
-          to: { name: 'index' }
+          title: "Home",
+          icon: "home",
+          to: { name: "index" },
         },
         {
-          title: 'Inspire',
-          icon: 'lightbulb',
-          to: { name: 'inspire' }
-        }
-      ]
-    }
+          title: "Inspire",
+          icon: "lightbulb",
+          to: { name: "inspire" },
+        },
+      ],
+    };
+  },
+};
+</script>
+
+<style lang="scss">
+html,
+body {
+  background-color: #2c3e50;
+
+  .title,
+  label,
+  .label {
+    color: white;
   }
 }
-</script>
+</style>
