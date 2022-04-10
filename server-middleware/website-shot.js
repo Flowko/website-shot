@@ -17,6 +17,9 @@ app.all("/screenshot", async (req, res) => {
       scale: params.scale || 1, // scale factor
       width: params.width || 1280, // width
       height: params.height || 1280, // height
+      launchOptions: {
+        headless: true, // true for headless mode, false for normal mode
+      },
     })
       .src(params.url, params.size || ["1280x1280"])
       .run()
