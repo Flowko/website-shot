@@ -14,10 +14,48 @@
         </div>
       </div>
     </nav>
+    <github-corner />
 
     <div class="container">
       <Nuxt />
     </div>
+
+    <footer class="flex justify-center p-8 text-center">
+      <div>
+        <span>
+          Built with 💛 By
+          <a
+            href="https://github.com/Flowko"
+            class="text-pink-300 hover:text-pink-200"
+            target="_blank"
+            >@Flowko</a
+          >
+          Using
+          <a
+            href="https://nuxtjs.org/"
+            class="text-pink-300 hover:text-pink-200"
+            target="_blank"
+            >Nuxtjs</a
+          >
+
+          ·
+          <a
+            href="https://buefy.org/documentation/start/"
+            class="text-pink-300 hover:text-pink-200"
+            target="_blank"
+            >Buefy</a
+          >
+          ·
+          <a
+            href="https://github.com/sindresorhus/pageres"
+            class="text-pink-300 hover:text-pink-200"
+            target="_blank"
+            >Pageres</a
+          >
+          and more!
+        </span>
+      </div>
+    </footer>
   </div>
 </template>
 
