@@ -19,6 +19,7 @@ app.all("/screenshot", async (req, res) => {
       height: params.height || 1280, // height
       launchOptions: {
         headless: true, // true for headless mode, false for normal mode
+        args: ["--no-sandbox", "--disable-setuid-sandbox"],
       },
     })
       .src(params.url, params.size || ["1280x1280"])
