@@ -4,21 +4,26 @@ export default {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: "website-shot",
+    title: "Website-Shot | Home",
     htmlAttrs: {
       lang: "en",
     },
     meta: [
       { charset: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { hid: "description", name: "description", content: "" },
+      {
+        hid: "description",
+        name: "description",
+        content:
+          "Generate a full web-page screenshot with our service, that provides rich interface to make any kind of web screenshots online for free with no limits",
+      },
       { name: "format-detection", content: "telephone=no" },
     ],
     link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
-  css: [],
+  css: ["~/assets/css/main.scss"],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [{ src: "~/plugins/underscore", ssr: false }],
@@ -32,7 +37,7 @@ export default {
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/buefy
-    "nuxt-buefy",
+    ["nuxt-buefy", { css: false }],
     // https://go.nuxtjs.dev/axios
     "@nuxtjs/axios",
   ],
@@ -44,7 +49,13 @@ export default {
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
-  build: {},
+  build: {
+    postcss: {
+      plugins: {
+        "postcss-custom-properties": false,
+      },
+    },
+  },
 
   serverMiddleware: [
     "~/server-middleware/logger",

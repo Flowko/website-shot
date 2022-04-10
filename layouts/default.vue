@@ -44,14 +44,4 @@ export default {
 </script>
 
 <style lang="scss">
-html,
-body {
-  background-color: #2c3e50;
-
-  .title,
-  label,
-  .label {
-    color: white;
-  }
-}
 </style>
