@@ -16,7 +16,8 @@ Generate a full web-page screenshot with our service, that provides rich interfa
 - [Tailwind](https://tailwindcss.com/)
 - [Buefy](https://buefy.org/documentation/start/)
 
-![Demo](https://user-images.githubusercontent.com/35883748/162637665-58630902-1cfa-478c-9345-b98bb28cd766.png)
+![Website Shot Demo](https://user-images.githubusercontent.com/35883748/162642419-5038991e-6cd6-4f2f-b39b-771ffefc3fbe.png)
+
 
 
 ## Build Setup
