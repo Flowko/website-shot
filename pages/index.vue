@@ -33,6 +33,11 @@
               DarkMode
             </b-switch>
           </b-field>
+          <b-field>
+            <b-switch v-model="params.save" type="is-danger">
+              Save to server
+            </b-switch>
+          </b-field>
 
           <b-field label="Resolutions:">
             <b-select
@@ -201,6 +206,7 @@ export default {
         width: 1920,
         height: 1080,
         scale: 100,
+        save: false,
       },
       imageFormats: ["png", "jpeg", "webp"],
       result: null,
