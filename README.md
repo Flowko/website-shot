@@ -20,6 +20,12 @@ Generate a full web-page screenshot with our service, that provides rich interfa
 
 
 
+## Docker compose
+```bash
+docker pull flowko1/website-shot
+docker run -it -d -p 3000:3000 flowko1/website-shot
+```
+
 ## Build Setup
 
 ```bash
