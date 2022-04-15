@@ -1,0 +1,9 @@
+# thanks to @geekedtv for the original script
+version: '3.3'
+services:
+    website-shot:
+        ports:
+            - '3003:3000'
+        volumes:
+            - '/docker/webshot:/usr/src/website-shot/screenshots'
+        image: flowko1/website-shot
