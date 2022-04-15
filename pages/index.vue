@@ -33,7 +33,8 @@
               DarkMode
             </b-switch>
           </b-field>
-          <b-field>
+
+          <b-field v-if="!$config.runningHeroku">
             <b-switch v-model="params.save" type="is-danger">
               Save to server
             </b-switch>
@@ -180,10 +181,20 @@
           </div>
           <b-progress v-if="loading" type="is-danger"></b-progress>
 
+          <div v-if="!$config.runningHeroku && result">
+            <p class="mt-4 text-white subtitle is-6">
+              Image saved under this path:
+            </p>
+            <p class="mt-0 font-bold text-pink-600">
+              {{ result.path }}
+            </p>
+          </div>
           <img
+            class="cursor-pointer"
             v-if="result && !loading"
             :src="result.image"
             :alt="result.filename"
+            @click="openImage(result)"
           />
         </div>
       </div>
@@ -263,6 +274,16 @@ export default {
           console.log(error);
           this.loading = false;
         });
+    },
+    openImage(result) {
+      if (result) {
+        let w = window.open("about:blank");
+        let image = new Image();
+        image.src = result.image;
+        setTimeout(function () {
+          w.document.write(image.outerHTML);
+        }, 0);
+      }
     },
   },
   watch: {

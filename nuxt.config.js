@@ -70,4 +70,8 @@ export default {
     prefetch: true,
     preconnect: true,
   },
+
+  publicRuntimeConfig: {
+    runningHeroku: process.env.RUNNING_HEROKU,
+  },
 };
