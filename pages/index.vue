@@ -2,6 +2,7 @@
   <section class="section">
     <b-field>
       <b-input
+        @keyup.native.enter="generateScreenshot"
         placeholder="https://github.com/flowko..."
         type="url"
         v-model="params.url"
@@ -27,20 +28,82 @@
             <b-switch v-model="params.crop" type="is-danger">
               FullSize
             </b-switch>
+            <b-tooltip type="is-success is-light" position="is-bottom">
+              <template v-slot:content>
+                <div class="text-base">
+                  <b>✅ Unchecked:</b> Crop the screenshot to the viewport size
+                  <br />
+                  <b>❌ Checked:</b> Takes screenshot of the entire page
+                </div>
+              </template>
+              <b-icon
+                type="is-white"
+                icon="information-outline"
+                size="is-small"
+              >
+              </b-icon>
+            </b-tooltip>
           </b-field>
           <b-field>
             <b-switch v-model="params.darkMode" type="is-danger">
               DarkMode
             </b-switch>
+            <b-tooltip type="is-success is-light" position="is-bottom">
+              <template v-slot:content>
+                <div class="text-base">
+                  <b>✅ Unchecked:</b> Light mode
+                  <br />
+                  <b>❌ Checked:</b> Dark mode
+                </div>
+              </template>
+              <b-icon
+                type="is-white"
+                icon="information-outline"
+                size="is-small"
+              >
+              </b-icon>
+            </b-tooltip>
           </b-field>
 
           <b-field v-if="!$config.runningHeroku">
             <b-switch v-model="params.save" type="is-danger">
               Save to server
             </b-switch>
+            <b-tooltip type="is-success is-light" position="is-bottom">
+              <template v-slot:content>
+                <div class="text-base">
+                  <b>✅ Unchecked:</b> Doesn't save to server
+                  <br />
+                  <b>❌ Checked:</b> Save to server
+                </div>
+              </template>
+              <b-icon
+                type="is-white"
+                icon="information-outline"
+                size="is-small"
+              >
+              </b-icon>
+            </b-tooltip>
           </b-field>
 
           <b-field label="Resolutions:">
+            <template #label>
+              Resolutions:
+              <b-tooltip type="is-success is-light" position="is-bottom">
+                <template v-slot:content>
+                  <div class="text-base">
+                    Resolution in which the screenshot will be<br />
+                    taken in. [width x height] format.
+                  </div>
+                </template>
+                <b-icon
+                  type="is-white"
+                  icon="information-outline"
+                  size="is-small"
+                >
+                </b-icon>
+              </b-tooltip>
+            </template>
             <b-select
               v-model="params.size"
               expanded
@@ -63,7 +126,23 @@
           </b-field>
 
           <div class="mt-4 columns">
-            <label class="label column">Delay in seconds:</label>
+            <label class="label column"
+              >Delay in seconds:
+              <b-tooltip type="is-success is-light" position="is-bottom">
+                <template v-slot:content>
+                  <div class="text-base">
+                    Delay capturing the screenshot.<br />
+                    Useful when the site does things after<br />
+                    load that you want to capture.
+                  </div>
+                </template>
+                <b-icon
+                  type="is-white"
+                  icon="information-outline"
+                  size="is-small"
+                >
+                </b-icon> </b-tooltip
+            ></label>
             <b-input
               class="column is-4"
               rounded
@@ -74,7 +153,20 @@
             ></b-input>
           </div>
 
-          <label class="label">Width:</label>
+          <label class="label"
+            >Width:
+            <b-tooltip type="is-success is-light" position="is-bottom">
+              <template v-slot:content>
+                <div class="text-base">Width of the screenshot in pixels.</div>
+              </template>
+              <b-icon
+                type="is-white"
+                icon="information-outline"
+                size="is-small"
+              >
+              </b-icon>
+            </b-tooltip>
+          </label>
           <div class="columns">
             <div class="column">
               <b-field>
@@ -95,7 +187,20 @@
             ></b-input>
           </div>
 
-          <label class="label">Height:</label>
+          <label class="label"
+            >Height:
+            <b-tooltip type="is-success is-light" position="is-bottom">
+              <template v-slot:content>
+                <div class="text-base">Height of the screenshot in pixels.</div>
+              </template>
+              <b-icon
+                type="is-white"
+                icon="information-outline"
+                size="is-small"
+              >
+              </b-icon>
+            </b-tooltip>
+          </label>
           <div class="columns">
             <div class="column">
               <b-field>
@@ -116,7 +221,23 @@
             ></b-input>
           </div>
 
-          <label class="label">Browser size:</label>
+          <label class="label"
+            >Browser size:
+
+            <b-tooltip type="is-success is-light" position="is-bottom">
+              <template v-slot:content>
+                <div class="text-base">
+                  Size of the browser window in pixels. [width x height]
+                </div>
+              </template>
+              <b-icon
+                type="is-white"
+                icon="information-outline"
+                size="is-small"
+              >
+              </b-icon>
+            </b-tooltip>
+          </label>
           <p class="text-lg font-semibold text-center text-white">
             {{ params.width }} x {{ params.height }} px
           </p>
@@ -124,6 +245,23 @@
           <p class="mt-4 title is-5">⚙️ Image options</p>
 
           <b-field label="Format:">
+            <template #label>
+              Format:
+              <b-tooltip type="is-success is-light" position="is-bottom">
+                <template v-slot:content>
+                  <div class="text-base">
+                    Format of the screenshot (PNG | JPEG | WEBP).<br />
+                    (default: PNG)
+                  </div>
+                </template>
+                <b-icon
+                  type="is-white"
+                  icon="information-outline"
+                  size="is-small"
+                >
+                </b-icon>
+              </b-tooltip>
+            </template>
             <b-select
               expanded
               placeholder="Select a format"
@@ -139,7 +277,23 @@
             </b-select>
           </b-field>
 
-          <label class="label">Scale:</label>
+          <label class="label"
+            >Scale:
+            <b-tooltip type="is-success is-light" position="is-bottom">
+              <template v-slot:content>
+                <div class="text-base">
+                  Scale of the screenshot. [10% - 100%]<br />
+                  (default: 100%).
+                </div>
+              </template>
+              <b-icon
+                type="is-white"
+                icon="information-outline"
+                size="is-small"
+              >
+              </b-icon>
+            </b-tooltip>
+          </label>
           <div class="columns">
             <div class="column">
               <b-field>
@@ -159,7 +313,22 @@
             ></b-input>
           </div>
 
-          <label class="label">image size:</label>
+          <label class="label"
+            >image size:
+            <b-tooltip type="is-success is-light" position="is-bottom">
+              <template v-slot:content>
+                <div class="text-base">
+                  Size of the image in pixels. [width x height]<br />
+                  (default: original size)
+                </div>
+              </template>
+              <b-icon
+                type="is-white"
+                icon="information-outline"
+                size="is-small"
+              >
+              </b-icon> </b-tooltip
+          ></label>
           <p class="text-lg font-semibold text-center text-white">
             {{ (params.scale * params.width) / 100 }} x
             {{ (params.scale * params.height) / 100 }} px
@@ -181,14 +350,6 @@
           </div>
           <b-progress v-if="loading" type="is-danger"></b-progress>
 
-          <div v-if="!$config.runningHeroku && result">
-            <p class="mt-4 text-white subtitle is-6">
-              Image saved under this path:
-            </p>
-            <p class="mt-0 font-bold text-pink-600">
-              {{ result.path }}
-            </p>
-          </div>
           <img
             class="cursor-pointer"
             v-if="result && !loading"
@@ -253,7 +414,7 @@ export default {
   },
   methods: {
     async generateScreenshot() {
-      if (this.loading) {
+      if (this.loading && !this.url) {
         return;
       }
       this.loading = true;
