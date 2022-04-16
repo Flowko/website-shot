@@ -1,7 +1,7 @@
 // bulma/buefy overrides
-$family-sans-serif: "Open Sans",
-"Arial",
-sans-serif !important;
+// $family-sans-serif: "Open Sans",
+// "Arial",
+// sans-serif !important;
 
 $input-border-color: white;
 $input-shadow: none;
@@ -30,5 +30,27 @@ body {
 
   .box {
     @apply bg-blueGray-900
+  }
+
+  pre {
+    background-color: unset;
+    color: unset;
+    font-size: unset;
+    overflow: unset;
+    padding: unset;
+    white-space: unset;
+    word-wrap: unset;
+    font-family: unset;
+  }
+
+  body,
+  button,
+  input,
+  optgroup,
+  select,
+  textarea,
+  pre,
+  code {
+    font-family: unset !important;
   }
 }

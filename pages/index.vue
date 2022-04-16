@@ -19,6 +19,7 @@
         >
       </p>
     </b-field>
+
     <div class="columns">
       <div class="column is-5">
         <div class="box bg-blueGray-900">
@@ -335,8 +336,8 @@
           </p>
         </div>
       </div>
-      <div class="column">
-        <div class="h-full box bg-blueGray-900">
+      <div class="column" style="height: 910px">
+        <div class="h-full overflow-y-auto box bg-blueGray-900">
           <p class="title is-5">Website Screenshot</p>
           <div v-if="!result" class="mb-3">
             <p class="title is-4">Capture a website screenshot online</p>
@@ -360,12 +361,79 @@
         </div>
       </div>
     </div>
+
+    <div class="columns">
+      <div class="column">
+        <div class="box bg-blueGray-900">
+          <label class="label column"
+            >Script:
+            <b-tooltip type="is-success is-light" position="is-bottom">
+              <template v-slot:content>
+                <div class="text-base">
+                  Loads the script in the browser before taking<br />
+                  screenshot of the page content, (Note: if the<br />
+                  script doesnt do anything, add some delay)
+                </div>
+              </template>
+              <b-icon
+                type="is-white"
+                icon="information-outline"
+                size="is-small"
+              >
+              </b-icon> </b-tooltip
+          ></label>
+          <CodeEditor
+            :wrap_code="true"
+            max_width="auto"
+            width="auto"
+            :copy_code="true"
+            v-model="params.script"
+            height="250px"
+          ></CodeEditor>
+        </div>
+      </div>
+      <div class="column">
+        <div class="box bg-blueGray-900">
+          <label class="label column"
+            >Style:
+            <b-tooltip type="is-success is-light" position="is-bottom">
+              <template v-slot:content>
+                <div class="text-base">
+                  Loads the style in the browser before taking<br />
+                  screenshot of the page content, (Note: if the<br />
+                  style doesnt do anything, add some delay)
+                </div>
+              </template>
+              <b-icon
+                type="is-white"
+                icon="information-outline"
+                size="is-small"
+              >
+              </b-icon> </b-tooltip
+          ></label>
+          <CodeEditor
+            :languages="[['css', 'CSS']]"
+            :wrap_code="true"
+            max_width="auto"
+            width="auto"
+            :copy_code="true"
+            v-model="params.style"
+            height="250px"
+          ></CodeEditor>
+        </div>
+      </div>
+    </div>
   </section>
 </template>
 
 <script>
+import CodeEditor from "simple-code-editor";
+
 export default {
   name: "IndexPage",
+  components: {
+    CodeEditor,
+  },
   data() {
     return {
       params: {
@@ -379,6 +447,10 @@ export default {
         height: 1080,
         scale: 100,
         save: false,
+        script: `//console.log('hello world');`,
+        style: `/* .test {
+          color: #000;
+        } */`,
       },
       imageFormats: ["png", "jpeg", "webp"],
       result: null,
@@ -412,29 +484,29 @@ export default {
       ],
     };
   },
+  mounted() {},
   methods: {
     async generateScreenshot() {
-      if (this.loading && !this.url) {
-        return;
-      }
-      this.loading = true;
-      this.result = null;
+      if (!this.loading && this.params.url !== null) {
+        this.loading = true;
+        this.result = null;
 
-      await this.$axios
-        .$post("/api/screenshot", {
-          ...this.params,
-          crop: !this.params.crop,
-          scale: this.params.scale / 100,
-          size: [this.params.size],
-        })
-        .then((response) => {
-          this.result = response;
-          this.loading = false;
-        })
-        .catch((error) => {
-          console.log(error);
-          this.loading = false;
-        });
+        await this.$axios
+          .$post("/api/screenshot", {
+            ...this.params,
+            crop: !this.params.crop,
+            scale: this.params.scale / 100,
+            size: [this.params.size],
+          })
+          .then((response) => {
+            this.result = response;
+            this.loading = false;
+          })
+          .catch((error) => {
+            console.log(error);
+            this.loading = false;
+          });
+      }
     },
     openImage(result) {
       if (result) {
