@@ -42,7 +42,7 @@ app.all("/screenshot", async (req, res) => {
       css: params.style || null, // true to load with custom css, null for no css
       launchOptions: {
         headless: true, // true for headless mode, false for normal mode
-        args: ["--no-sandbox"],
+        args: ["--no-sandbox", "--disable-setuid-sandbox"],
         waitUntil: "networkidle2",
         product: "chrome",
       },
