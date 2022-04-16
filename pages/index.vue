@@ -386,7 +386,7 @@
             :wrap_code="true"
             max_width="auto"
             width="auto"
-            :copy_code="true"
+            :copy_code="false"
             v-model="params.script"
             height="250px"
           ></CodeEditor>
@@ -416,7 +416,7 @@
             :wrap_code="true"
             max_width="auto"
             width="auto"
-            :copy_code="true"
+            :copy_code="false"
             v-model="params.style"
             height="250px"
           ></CodeEditor>
