@@ -15,6 +15,9 @@ Generate a full web-page screenshot with our service, that provides rich interfa
 - [Tailwind](https://tailwindcss.com/)
 - [Buefy](https://buefy.org/documentation/start/)
 
+⚠️ It can't take screenshots of pages where authentication is required. Personal bank pages, E-Mail Inboxes or any other page that requires you to log in to see it, it may require using custom js to paypass that.
+
+
 ![Website Shot Demo](https://user-images.githubusercontent.com/35883748/162642419-5038991e-6cd6-4f2f-b39b-771ffefc3fbe.png)
 
 👩‍🏫 inspired by [Site Shot](https://www.site-shot.com/)
