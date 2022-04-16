@@ -9,7 +9,6 @@ WORKDIR /usr/src/website-shot
 RUN apk update && apk upgrade
 RUN apk add git
 RUN apk add chromium
-RUN PUPPETEER_PRODUCT=firefox npm i puppeteer
 
 # copy the app, note .dockerignore
 COPY . /usr/src/website-shot/
