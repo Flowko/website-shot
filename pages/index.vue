@@ -437,7 +437,7 @@ export default {
   data() {
     return {
       params: {
-        url: "https://noted.lol/self-hosted-weekly-roundup-2/",
+        url: null,
         size: "1920x1080",
         fullPage: true,
         darkMode: false,
