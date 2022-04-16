@@ -4,8 +4,8 @@
 
 Generate a full web-page screenshot with our service, that provides rich interface to make any kind of web screenshots online for free with no limits. The simplest way to take a full page screenshot, we support a long pages up to 20000 pixels
 
-[🔗 View it here](https://website-shot.herokuapp.com/)
-
+[🔗 View it here](https://website-shot.herokuapp.com/)<br/>
+[📰 View Noted Article about the app](https://noted.lol/take-full-website-screenshots-with-the-self-hosted-website-shot/)
 
 🏗️ Built with:
 
