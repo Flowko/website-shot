@@ -6,7 +6,6 @@ Generate a full web-page screenshot with our service, that provides rich interfa
 
 [🔗 View it here](https://website-shot.herokuapp.com/)
 
-👩‍🏫 inspired by [Site Shot](https://www.site-shot.com/)
 
 🏗️ Built with:
 
@@ -18,6 +17,7 @@ Generate a full web-page screenshot with our service, that provides rich interfa
 
 ![Website Shot Demo](https://user-images.githubusercontent.com/35883748/162642419-5038991e-6cd6-4f2f-b39b-771ffefc3fbe.png)
 
+👩‍🏫 inspired by [Site Shot](https://www.site-shot.com/)
 
 
 ## Docker compose
