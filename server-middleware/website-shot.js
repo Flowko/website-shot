@@ -1,95 +1,122 @@
 const bodyParser = require("body-parser");
 const app = require("express")();
-const Pageres = require("pageres");
 const path = require("path");
-const { env } = require("process");
+const fs = require("fs");
+let scrollToBottom = require("scroll-to-bottomjs");
+const dateFns = require("date-fns");
+
+import captureWebsite from "capture-website";
+import makeDir from "make-dir";
+import template from "lodash.template";
+import filenamifyUrl from "filenamify-url";
+import { parse as parseUrl } from "url";
+import filenamify from "filenamify";
+
 require("dotenv").config();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-async function autoScroll(page) {
-  await page.evaluate(async () => {
-    await new Promise((resolve, reject) => {
-      var totalHeight = 0;
-      var distance = 100;
-      var timer = setInterval(() => {
-        var scrollHeight = document.body.scrollHeight;
-        window.scrollBy(0, distance);
-        totalHeight += distance;
+function generateFilename(options) {
+  let hash = parseUrl(options.url).hash ?? "";
+  // Strip empty hash fragments: `#` `#/` `#!/`
+  if (/^#!?\/?$/.test(hash)) {
+    hash = "";
+  }
 
-        if (totalHeight >= scrollHeight - window.innerHeight) {
-          clearInterval(timer);
-          resolve();
-        }
-      }, 300);
-    });
+  const now = Date.now();
+  const basename = fs.existsSync(options.url)
+    ? path.basename(options.url)
+    : options.url;
+
+  // const filename = `${params.url.replace(/\//g, "-")}.${params.format}`;
+  const filenameTemplate = template(`${options.filename}.${options.format}`);
+  let filename = filenameTemplate({
+    crop: options.fullPage ? "" : "-cropped",
+    date: dateFns.format(now, "yyyy-MM-dd"),
+    time: dateFns.format(now, "HH-mm-ss"),
+    size: options.size,
+    width: options.width,
+    height: options.height,
+    url: `${filenamifyUrl(basename)}${filenamify(hash)}`,
   });
+
+  const filepath = path.join(__dirname + "/../screenshots", filename);
+
+  return {
+    filepath,
+    filename,
+  };
 }
 
-app.all("/screenshot", async (req, res) => {
+app.post("/screenshot", async (req, res) => {
   const params = req.body;
 
   if (params.url) {
-    var data = {
-      crop: params.crop || false, // false for full size, true for cropped
-      darkMode: params.darkMode || false, // true for dark mode, false for light mode
-      format: params.format || "png", // png, jpeg
-      delay: params.delay || 1, // seconds
-      scale: params.scale || 1, // scale factor
-      width: params.width || 1280, // width
-      height: params.height || 1280, // height
-      script: "window.scrollTo(0, document.body.scrollHeight);" || null, // true to load with custom javascript, null for no javascript,
-      css: params.style || null, // true to load with custom css, null for no css
-      launchOptions: {
-        headless: true, // true for headless mode, false for normal mode
-        args: ["--no-sandbox", "--disable-setuid-sandbox"],
-        waitUntil: "networkidle2",
-        product: "chrome",
-      },
-      useragent:
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36 WAIT_UNTIL=load",
+    const styles = [];
+    const scripts = [];
 
-      beforeScreenshot: async (page) => {
-        await autoScroll(page); // scroll through the page to load all the images
+    if (params.style) {
+      styles.push(params.style);
+    }
+
+    if (params.script) {
+      scripts.push(params.script);
+    }
+
+    var options = {
+      url: params.url,
+      size: params.size || "1920x1080",
+      fullPage: params.fullPage,
+      darkMode: params.darkMode,
+      format: params.format || "png",
+      delay: params.delay || 1,
+      overwrite: true,
+      width: params.width || 1920,
+      height: params.height || 1080,
+      filename: "<%= url %>-<%= size %><%= crop %>",
+      scaleFactor: params.scale || 1,
+      save: params.save,
+      scripts,
+      styles,
+      launchOptions: {
+        headless: true,
+        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+        product: "chrome",
+        waitUntil: "load",
+      },
+      beforeScreenshot: async (page, browser) => {
+        if (params.fullPage) {
+          await page.evaluate(scrollToBottom);
+        }
       },
     };
 
     if (process.env.RUNNING_HEROKU == null) {
-      data.launchOptions.executablePath = "/usr/bin/chromium-browser";
+      options.launchOptions.executablePath = "/usr/bin/chromium-browser";
     }
 
-    if (params.save) {
-      await new Pageres(data)
-        .dest(__dirname + "/../screenshots")
-        .src(params.url, params.size || ["1280x1280"])
-        .run()
-        .then((streams) => {
-          const mimeType = params.format
-            ? `image/${params.format}`
-            : "image/png";
-          const b64 = Buffer.from(streams[0]).toString("base64");
-          const base64Data = `data:${mimeType};base64,${b64}`;
-          const filename = `${params.url.replace(/\//g, "-")}.${params.format}`;
-          res.status(200).json({
-            image: base64Data,
-            filename: filename,
-            path: path.join(__dirname + "/../screenshots", streams[0].filename),
-          });
+    const { filename, filepath } = await generateFilename(options);
+
+    await captureWebsite
+      .buffer(options.url, options)
+      .then(async (buffer) => {
+        const mimeType = options.format
+          ? `image/${options.format}`
+          : "image/png";
+        const b64 = Buffer.from(buffer).toString("base64");
+        const base64Data = `data:${mimeType};base64,${b64}`;
+        if (options.save) {
+          await makeDir(__dirname + "/../screenshots");
+          await fs.writeFileSync(filepath, buffer);
+        }
+        res.status(200).json({
+          image: base64Data,
+          filename: filename,
         });
-    } else {
-      await new Pageres(data)
-        .src(params.url, params.size || ["1280x1280"])
-        .run()
-        .then((streams) => {
-          const mimeType = params.format
-            ? `image/${params.format}`
-            : "image/png";
-          const b64 = Buffer.from(streams[0]).toString("base64");
-          const base64Data = `data:${mimeType};base64,${b64}`;
-          const filename = `${params.url.replace(/\//g, "-")}.${params.format}`;
-          res.status(200).json({ image: base64Data, filename: filename });
-        });
-    }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   } else {
     res.status(500).json({ succes: false, result: "No url provided!" });
   }

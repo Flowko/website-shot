@@ -26,7 +26,7 @@
           <p class="title is-5">⚛️ Browser options</p>
 
           <b-field>
-            <b-switch v-model="params.crop" type="is-danger">
+            <b-switch v-model="params.fullPage" type="is-danger">
               FullSize
             </b-switch>
             <b-tooltip type="is-success is-light" position="is-bottom">
@@ -437,9 +437,9 @@ export default {
   data() {
     return {
       params: {
-        url: null,
+        url: "https://noted.lol/self-hosted-weekly-roundup-2/",
         size: "1920x1080",
-        crop: true,
+        fullPage: true,
         darkMode: false,
         format: "png",
         delay: 1,
@@ -494,7 +494,6 @@ export default {
         await this.$axios
           .$post("/api/screenshot", {
             ...this.params,
-            crop: !this.params.crop,
             scale: this.params.scale / 100,
             size: [this.params.size],
           })
