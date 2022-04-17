@@ -10,8 +10,6 @@ Generate a full web-page screenshot with our service, that provides rich interfa
 🏗️ Built with:
 
 - [Nuxtjs](https://nuxtjs.org/)
-- [Pageres](https://github.com/sindresorhus/pageres)
-- [Chart.js](https://www.chartjs.org/)
 - [Tailwind](https://tailwindcss.com/)
 - [Buefy](https://buefy.org/documentation/start/)
 
