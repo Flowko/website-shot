@@ -1,4 +1,4 @@
-# 📸 Website Shot - Capture a website screenshot online
+# 📸 Self Hosted Website Shot - Capture a website screenshot online
 
 
 
@@ -23,7 +23,7 @@ Generate a full web-page screenshot with our service, that provides rich interfa
 ![Website Shot Demo](https://user-images.githubusercontent.com/35883748/162642419-5038991e-6cd6-4f2f-b39b-771ffefc3fbe.png)
 
 
-## Docker compose
+## Docker
 ```bash
 docker pull flowko1/website-shot
 docker run -it -d -p 3000:3000 flowko1/website-shot
