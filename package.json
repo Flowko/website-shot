@@ -24,7 +24,7 @@
     "lodash.template": "^4.5.0",
     "make-dir": "^3.1.0",
     "nuxt": "^2.15.8",
-    "nuxt-buefy": "^0.4.13",
+    "nuxt-buefy": "^0.4.22",
     "sass": "^1.49.7",
     "sass-loader": "10",
     "scroll-to-bottomjs": "^1.1.0",
