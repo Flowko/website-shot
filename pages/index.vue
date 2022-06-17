@@ -499,7 +499,7 @@ export default {
   data() {
     return {
       params: {
-        url: "https://github.com/Flowko/website-shot",
+        url: null,
         size: "1920x1080",
         fullPage: true,
         darkMode: false,
@@ -509,7 +509,7 @@ export default {
         height: 1080,
         scale: 100,
         save: false,
-        enablePdf: true,
+        enablePdf: false,
         pdf: {
           format: "resolution",
           landscape: false,
