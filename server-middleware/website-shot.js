@@ -4,8 +4,9 @@ const path = require("path");
 const fs = require("fs");
 let scrollToBottom = require("scroll-to-bottomjs");
 const dateFns = require("date-fns");
+var stream = require("stream");
 
-import captureWebsite from "capture-website";
+import captureWebsite from "./capture";
 import makeDir from "make-dir";
 import template from "lodash.template";
 import filenamifyUrl from "filenamify-url";
@@ -68,7 +69,7 @@ app.post("/screenshot", async (req, res) => {
       size: params.size || "1920x1080",
       fullPage: params.fullPage,
       darkMode: params.darkMode,
-      format: params.format || "png",
+      format: params.pdf ? "pdf" : params.format || "png",
       delay: params.delay || 1,
       overwrite: true,
       width: params.width || 1920,
@@ -78,6 +79,16 @@ app.post("/screenshot", async (req, res) => {
       save: params.save,
       scripts,
       styles,
+      pdf: params.enablePdf
+        ? {
+            format:
+              params.pdf.format == "resolution" ? null : params.pdf.format,
+            printBackground: true,
+            landscape: params.pdf.landscape || false,
+            width: params.width || 1920,
+            height: params.height || 1080,
+          }
+        : false,
       launchOptions: {
         headless: true,
         args: ["--no-sandbox", "--disable-setuid-sandbox"],
@@ -100,19 +111,35 @@ app.post("/screenshot", async (req, res) => {
     await captureWebsite
       .buffer(options.url, options)
       .then(async (buffer) => {
-        const mimeType = options.format
-          ? `image/${options.format}`
-          : "image/png";
-        const b64 = Buffer.from(buffer).toString("base64");
-        const base64Data = `data:${mimeType};base64,${b64}`;
-        if (options.save) {
-          await makeDir(__dirname + "/../screenshots");
-          await fs.writeFileSync(filepath, buffer);
+        if (params.enablePdf) {
+          if (options.save) {
+            await makeDir(__dirname + "/../screenshots");
+            await fs.writeFileSync(filepath, buffer);
+          }
+          const readStream = new stream.PassThrough();
+          readStream.end(buffer);
+          res.contentType("application/pdf");
+          res.setHeader(
+            "Content-Disposition",
+            `attachment; filename="${filename}"`
+          );
+          res.setHeader("Content-Type", "application/pdf");
+          readStream.pipe(res);
+        } else {
+          const mimeType = options.format
+            ? `image/${options.format}`
+            : "image/png";
+          const b64 = Buffer.from(buffer).toString("base64");
+          const base64Data = `data:${mimeType};base64,${b64}`;
+          if (options.save) {
+            await makeDir(__dirname + "/../screenshots");
+            await fs.writeFileSync(filepath, buffer);
+          }
+          res.status(200).json({
+            image: base64Data,
+            filename: filename,
+          });
         }
-        res.status(200).json({
-          image: base64Data,
-          filename: filename,
-        });
       })
       .catch((error) => {
         console.log(error);

@@ -65,6 +65,26 @@
               </b-icon>
             </b-tooltip>
           </b-field>
+          <b-field>
+            <b-switch v-model="params.enablePdf" type="is-danger">
+              PDF
+            </b-switch>
+            <b-tooltip type="is-success is-light" position="is-bottom">
+              <template v-slot:content>
+                <div class="text-base">
+                  <b>✅ Unchecked:</b> Doesnt create a PDF
+                  <br />
+                  <b>❌ Checked:</b> Creates a PDF
+                </div>
+              </template>
+              <b-icon
+                type="is-white"
+                icon="information-outline"
+                size="is-small"
+              >
+              </b-icon>
+            </b-tooltip>
+          </b-field>
 
           <b-field v-if="!$config.runningHeroku">
             <b-switch v-model="params.save" type="is-danger">
@@ -123,6 +143,38 @@
                   {{ resolution }}
                 </option>
               </optgroup>
+            </b-select>
+          </b-field>
+          <b-field v-if="params.enablePdf" label="PDF Formats:">
+            <template #label>
+              PDF Formats:
+              <b-tooltip type="is-success is-light" position="is-bottom">
+                <template v-slot:content>
+                  <div class="text-base">
+                    Paper Format in which the pdf will be genrated<br />
+                    based on. select Resolution for [width x height] format.
+                  </div>
+                </template>
+                <b-icon
+                  type="is-white"
+                  icon="information-outline"
+                  size="is-small"
+                >
+                </b-icon>
+              </b-tooltip>
+            </template>
+            <b-select
+              v-model="params.pdf.format"
+              expanded
+              placeholder="Select a character"
+            >
+              <option
+                :value="format"
+                v-for="(format, index) in pdfFormats"
+                :key="index"
+              >
+                {{ format }}
+              </option>
             </b-select>
           </b-field>
 
@@ -243,16 +295,49 @@
             {{ params.width }} x {{ params.height }} px
           </p>
 
-          <p class="mt-4 title is-5">⚙️ Image options</p>
+          <template v-if="!params.enablePdf">
+            <p class="mt-4 title is-5">⚙️ Image options</p>
 
-          <b-field label="Format:">
-            <template #label>
-              Format:
+            <b-field label="Format:">
+              <template #label>
+                Format:
+                <b-tooltip type="is-success is-light" position="is-bottom">
+                  <template v-slot:content>
+                    <div class="text-base">
+                      Format of the screenshot (PNG | JPEG | WEBP).<br />
+                      (default: PNG)
+                    </div>
+                  </template>
+                  <b-icon
+                    type="is-white"
+                    icon="information-outline"
+                    size="is-small"
+                  >
+                  </b-icon>
+                </b-tooltip>
+              </template>
+              <b-select
+                expanded
+                placeholder="Select a format"
+                v-model="params.format"
+              >
+                <option
+                  v-for="option in imageFormats"
+                  :value="option"
+                  :key="option"
+                >
+                  {{ option }}
+                </option>
+              </b-select>
+            </b-field>
+
+            <label class="label"
+              >Scale:
               <b-tooltip type="is-success is-light" position="is-bottom">
                 <template v-slot:content>
                   <div class="text-base">
-                    Format of the screenshot (PNG | JPEG | WEBP).<br />
-                    (default: PNG)
+                    Scale of the screenshot. [10% - 100%]<br />
+                    (default: 100%).
                   </div>
                 </template>
                 <b-icon
@@ -262,78 +347,47 @@
                 >
                 </b-icon>
               </b-tooltip>
-            </template>
-            <b-select
-              expanded
-              placeholder="Select a format"
-              v-model="params.format"
-            >
-              <option
-                v-for="option in imageFormats"
-                :value="option"
-                :key="option"
-              >
-                {{ option }}
-              </option>
-            </b-select>
-          </b-field>
-
-          <label class="label"
-            >Scale:
-            <b-tooltip type="is-success is-light" position="is-bottom">
-              <template v-slot:content>
-                <div class="text-base">
-                  Scale of the screenshot. [10% - 100%]<br />
-                  (default: 100%).
-                </div>
-              </template>
-              <b-icon
-                type="is-white"
-                icon="information-outline"
-                size="is-small"
-              >
-              </b-icon>
-            </b-tooltip>
-          </label>
-          <div class="columns">
-            <div class="column">
-              <b-field>
-                <b-slider
-                  type="is-danger"
-                  v-model="params.scale"
-                  :max="100"
-                  :min="10"
-                  size="is-medium"
-                ></b-slider>
-              </b-field>
+            </label>
+            <div class="columns">
+              <div class="column">
+                <b-field>
+                  <b-slider
+                    type="is-danger"
+                    v-model="params.scale"
+                    :max="100"
+                    :min="10"
+                    size="is-medium"
+                  ></b-slider>
+                </b-field>
+              </div>
+              <b-input
+                class="column is-4"
+                rounded
+                v-model="params.scale"
+              ></b-input>
             </div>
-            <b-input
-              class="column is-4"
-              rounded
-              v-model="params.scale"
-            ></b-input>
-          </div>
 
-          <label class="label"
-            >image size:
-            <b-tooltip type="is-success is-light" position="is-bottom">
-              <template v-slot:content>
-                <div class="text-base">
-                  Size of the image in pixels. [width x height]<br />
-                  (default: original size)
-                </div>
-              </template>
-              <b-icon
-                type="is-white"
-                icon="information-outline"
-                size="is-small"
-              >
-              </b-icon> </b-tooltip
-          ></label>
-          <p class="text-lg font-semibold text-center text-white">
-            {{ (params.scale * params.width) / 100 }} x
-            {{ (params.scale * params.height) / 100 }} px
-          </p>
+            <label class="label"
+              >image size:
+              <b-tooltip type="is-success is-light" position="is-bottom">
+                <template v-slot:content>
+                  <div class="text-base">
+                    Size of the image in pixels. [width x height]<br />
+                    (default: original size)
+                  </div>
+                </template>
+                <b-icon
+                  type="is-white"
+                  icon="information-outline"
+                  size="is-small"
+                >
+                </b-icon> </b-tooltip
+            ></label>
+            <p class="text-lg font-semibold text-center text-white">
+              {{ (params.scale * params.width) / 100 }} x
+              {{ (params.scale * params.height) / 100 }} px
+            </p>
+          </template>
         </div>
       </div>
       <div class="column" style="height: 910px">
@@ -357,6 +411,14 @@
             :src="result.image"
             :alt="result.filename"
             @click="openImage(result)"
+          />
+
+          <embed
+            v-if="pdfSrc"
+            :src="pdfSrc"
+            width="100%"
+            height="100%"
+            type="application/pdf"
           />
         </div>
       </div>
@@ -437,7 +499,7 @@ export default {
   data() {
     return {
       params: {
-        url: null,
+        url: "https://github.com/Flowko/website-shot",
         size: "1920x1080",
         fullPage: true,
         darkMode: false,
@@ -447,12 +509,18 @@ export default {
         height: 1080,
         scale: 100,
         save: false,
+        enablePdf: true,
+        pdf: {
+          format: "resolution",
+          landscape: false,
+        },
         script: `//console.log('hello world');`,
         style: `/* .test {
           color: #000;
         } */`,
       },
       imageFormats: ["png", "jpeg", "webp"],
+      pdfSrc: null,
       result: null,
       loading: false,
       resolutions: [
@@ -482,6 +550,16 @@ export default {
           resolutions: ["320x480", "480x320", "320x320", "480x480"],
         },
       ],
+      pdfFormats: [
+        "resolution",
+        "A4",
+        "A3",
+        "A2",
+        "A1",
+        "A0",
+        "Letter",
+        "Legal",
+      ],
     };
   },
   mounted() {},
@@ -490,15 +568,30 @@ export default {
       if (!this.loading && this.params.url !== null) {
         this.loading = true;
         this.result = null;
+        this.pdfSrc = null;
 
         await this.$axios
-          .$post("/api/screenshot", {
-            ...this.params,
-            scale: this.params.scale / 100,
-            size: [this.params.size],
-          })
+          .$post(
+            "/api/screenshot",
+            {
+              ...this.params,
+              scale: this.params.scale / 100,
+              size: [this.params.size],
+            },
+            {
+              responseType: this.params.enablePdf ? "blob" : null,
+            }
+          )
           .then((response) => {
-            this.result = response;
+            if (this.params.enablePdf) {
+              let blob = new window.Blob([response], {
+                type: "application/pdf",
+              });
+              this.pdfSrc = window.URL.createObjectURL(blob);
+            } else {
+              this.result = response;
+            }
+
             this.loading = false;
           })
           .catch((error) => {
