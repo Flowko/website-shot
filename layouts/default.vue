@@ -1,7 +1,7 @@
 <template>
-  <div class="font-serif text-white">
+  <div class="font-serif">
     <nav
-      class="navbar header has-shadow is-danger"
+      class="navbar header has-shadow is-info"
       role="navigation"
       aria-label="main navigation"
     >
@@ -14,26 +14,25 @@
         </div>
       </div>
     </nav>
-    <github-corner />
 
-    <div class="container">
+    <main class="sm:px-[30px] mx-auto max-w-4xl px-5">
       <Nuxt />
-    </div>
+    </main>
 
     <footer class="flex justify-center p-8 text-center">
       <div>
         <span>
-          Built with 💛 By
+          Built with 💙 By
           <a
             href="https://github.com/Flowko"
-            class="text-pink-300 hover:text-pink-200"
+            class="text-primary-200 hover:text-primary-100"
             target="_blank"
             >@Flowko</a
           >
           Using
           <a
             href="https://nuxtjs.org/"
-            class="text-pink-300 hover:text-pink-200"
+            class="text-primary-200 hover:text-primary-100"
             target="_blank"
             >Nuxtjs</a
           >
@@ -41,17 +40,11 @@
           ·
           <a
             href="https://buefy.org/documentation/start/"
-            class="text-pink-300 hover:text-pink-200"
+            class="text-primary-200 hover:text-primary-100"
             target="_blank"
             >Buefy</a
           >
-          ·
-          <a
-            href="https://github.com/sindresorhus/pageres"
-            class="text-pink-300 hover:text-pink-200"
-            target="_blank"
-            >Pageres</a
-          >
+
           and more!
         </span>
       </div>

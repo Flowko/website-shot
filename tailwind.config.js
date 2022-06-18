@@ -1,8 +1,19 @@
 const colors = require("tailwindcss/colors");
 module.exports = {
   mode: "jit",
-  purge: ["./public/**/*.html", "./src/**/*.{js,jsx,ts,tsx,vue}"],
-  darkMode: false, // or 'media' or 'class'
+  purge: {
+    content: [
+      `components/**/*.{vue,js}`,
+      `layouts/**/*.vue`,
+      `pages/**/*.vue`,
+      `plugins/**/*.{js,ts}`,
+      `nuxt.config.{js,ts}`,
+      "./public/index.html",
+      "./public/**/*.html",
+      "node_modules/tv-*/dist/tv-*.umd.min.js",
+    ],
+  },
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
@@ -11,10 +22,16 @@ module.exports = {
         lime: colors.lime,
         primary: colors.emerald,
         violet: colors.violet,
+        text: "#363a52",
+        border: "#ced4da",
+        primary: {
+          100: "#2189f3",
+          200: "#1c7cdb",
+        },
       },
     },
     fontFamily: {
-      serif: ["Arvo", "serif"],
+      serif: ["Space Grotesk", "serif"],
     },
   },
   variants: {

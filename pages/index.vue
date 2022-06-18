@@ -1,307 +1,280 @@
 <template>
-  <section class="section">
-    <b-field>
-      <b-input
-        @keyup.native.enter="generateScreenshot"
+  <section class="py-20">
+    <div class="flex flex-col bg-[#FAFBFB] rounded-md shadow-lg">
+      <input
+        class="w-full p-3 transition-all ease-linear delay-75 border-2 rounded-md outline-none  focus:outline-none focus:border-primary-200 focus:border-dashed"
+        @keyup.enter="generateScreenshot"
         placeholder="https://github.com/flowko..."
         type="url"
         v-model="params.url"
-        expanded
-      ></b-input>
-      <p class="control">
-        <b-button
-          @click="generateScreenshot"
-          icon-left="camera"
-          type="is-danger"
-          class="button is-danger"
-          :disabled="loading || !params.url"
-          >SHOT</b-button
+      />
+
+      <div class="flex items-center justify-center my-4 space-x-10">
+        <div
+          class="flex flex-col items-center justify-center w-32 h-32 text-center transition-all ease-linear delay-150 bg-gray-200 cursor-pointer  rounded-2xl hover:bg-gray-300"
+          :class="{
+            'border-primary-200 border-dashed border-2 shadow-md ':
+              selectedType == type.value,
+          }"
+          @click="selectedType = type.value"
+          v-for="(type, index) in types"
+          :key="index"
         >
-      </p>
-    </b-field>
+          <span class="text-xl font-bold">
+            {{ type.label }}
+          </span>
+          <img
+            :src="require(`../assets/icons/${type.icon}.svg`)"
+            class="block w-8 mt-2"
+          />
+        </div>
+      </div>
 
-    <div class="columns">
-      <div class="column is-5">
-        <div class="box bg-blueGray-900">
-          <p class="title is-5">⚛️ Browser options</p>
-
-          <b-field>
-            <b-switch v-model="params.fullPage" type="is-danger">
-              FullSize
-            </b-switch>
-            <b-tooltip type="is-success is-light" position="is-bottom">
-              <template v-slot:content>
-                <div class="text-base">
-                  <b>✅ Unchecked:</b> Crop the screenshot to the viewport size
-                  <br />
-                  <b>❌ Checked:</b> Takes screenshot of the entire page
-                </div>
+      <div class="s-grid">
+        <div class="s-row">
+          <div class="s-grid-item">
+            <b-field label="Resolutions:">
+              <template #label>
+                Resolutions:
+                <b-tooltip type="is-success is-dark" position="is-bottom">
+                  <template v-slot:content>
+                    <div class="text-base">
+                      Resolution in which the screenshot will be<br />
+                      taken in. [width x height] format.
+                    </div>
+                  </template>
+                  <b-icon
+                    type="is-success"
+                    icon="information-outline"
+                    size="is-small"
+                  >
+                  </b-icon>
+                </b-tooltip>
               </template>
-              <b-icon
-                type="is-white"
-                icon="information-outline"
-                size="is-small"
+              <b-select
+                v-model="params.size"
+                expanded
+                placeholder="Select a resolution"
               >
-              </b-icon>
-            </b-tooltip>
-          </b-field>
-          <b-field>
-            <b-switch v-model="params.darkMode" type="is-danger">
-              DarkMode
-            </b-switch>
-            <b-tooltip type="is-success is-light" position="is-bottom">
-              <template v-slot:content>
-                <div class="text-base">
-                  <b>✅ Unchecked:</b> Light mode
-                  <br />
-                  <b>❌ Checked:</b> Dark mode
-                </div>
-              </template>
-              <b-icon
-                type="is-white"
-                icon="information-outline"
-                size="is-small"
-              >
-              </b-icon>
-            </b-tooltip>
-          </b-field>
-          <b-field>
-            <b-switch v-model="params.enablePdf" type="is-danger">
-              PDF
-            </b-switch>
-            <b-tooltip type="is-success is-light" position="is-bottom">
-              <template v-slot:content>
-                <div class="text-base">
-                  <b>✅ Unchecked:</b> Doesnt create a PDF
-                  <br />
-                  <b>❌ Checked:</b> Creates a PDF
-                </div>
-              </template>
-              <b-icon
-                type="is-white"
-                icon="information-outline"
-                size="is-small"
-              >
-              </b-icon>
-            </b-tooltip>
-          </b-field>
-
-          <b-field v-if="!$config.runningHeroku">
-            <b-switch v-model="params.save" type="is-danger">
-              Save to server
-            </b-switch>
-            <b-tooltip type="is-success is-light" position="is-bottom">
-              <template v-slot:content>
-                <div class="text-base">
-                  <b>✅ Unchecked:</b> Doesn't save to server
-                  <br />
-                  <b>❌ Checked:</b> Save to server
-                </div>
-              </template>
-              <b-icon
-                type="is-white"
-                icon="information-outline"
-                size="is-small"
-              >
-              </b-icon>
-            </b-tooltip>
-          </b-field>
-
-          <b-field label="Resolutions:">
-            <template #label>
-              Resolutions:
-              <b-tooltip type="is-success is-light" position="is-bottom">
+                <optgroup
+                  v-for="(res, index) in resolutions"
+                  :key="index"
+                  :label="res.label"
+                >
+                  <option
+                    v-for="(resolution, index2) in res.resolutions"
+                    :value="resolution.value"
+                    :key="index2"
+                  >
+                    {{ resolution.value }} ({{ resolution.label }})
+                  </option>
+                </optgroup>
+              </b-select>
+            </b-field>
+          </div>
+          <div class="s-grid-item">
+            <label class="label"
+              >Width:
+              <b-tooltip type="is-success is-dark" position="is-bottom">
                 <template v-slot:content>
                   <div class="text-base">
-                    Resolution in which the screenshot will be<br />
-                    taken in. [width x height] format.
+                    Width of the screenshot in pixels.
                   </div>
                 </template>
                 <b-icon
-                  type="is-white"
+                  type="is-success"
                   icon="information-outline"
                   size="is-small"
                 >
                 </b-icon>
               </b-tooltip>
-            </template>
-            <b-select
-              v-model="params.size"
-              expanded
-              placeholder="Select a character"
-            >
-              <optgroup
-                v-for="(res, index) in resolutions"
-                :key="index"
-                :label="res.label"
-              >
-                <option
-                  :value="resolution"
-                  v-for="(resolution, index2) in res.resolutions"
-                  :key="index2"
-                >
-                  {{ resolution }}
-                </option>
-              </optgroup>
-            </b-select>
-          </b-field>
-          <b-field v-if="params.enablePdf" label="PDF Formats:">
-            <template #label>
-              PDF Formats:
-              <b-tooltip type="is-success is-light" position="is-bottom">
+            </label>
+            <div class="columns">
+              <div class="column">
+                <b-field>
+                  <b-slider
+                    type="is-info"
+                    v-model="params.width"
+                    :max="8000"
+                    :min="240"
+                    lazy
+                  ></b-slider>
+                </b-field>
+              </div>
+              <b-input class="column is-4" v-model="params.width"></b-input>
+            </div>
+          </div>
+          <div class="s-grid-item">
+            <label class="label"
+              >Height:
+              <b-tooltip type="is-success is-dark" position="is-bottom">
                 <template v-slot:content>
                   <div class="text-base">
-                    Paper Format in which the pdf will be genrated<br />
-                    based on. select Resolution for [width x height] format.
+                    Height of the screenshot in pixels.
                   </div>
                 </template>
                 <b-icon
-                  type="is-white"
+                  type="is-success"
                   icon="information-outline"
                   size="is-small"
                 >
                 </b-icon>
               </b-tooltip>
-            </template>
-            <b-select
-              v-model="params.pdf.format"
-              expanded
-              placeholder="Select a character"
-            >
-              <option
-                :value="format"
-                v-for="(format, index) in pdfFormats"
-                :key="index"
-              >
-                {{ format }}
-              </option>
-            </b-select>
-          </b-field>
-
-          <div class="mt-4 columns">
-            <label class="label column"
-              >Delay in seconds:
-              <b-tooltip type="is-success is-light" position="is-bottom">
+            </label>
+            <div class="columns">
+              <div class="column">
+                <b-field>
+                  <b-slider
+                    type="is-info"
+                    v-model="params.height"
+                    :max="8000"
+                    :min="240"
+                    lazy
+                  ></b-slider>
+                </b-field>
+              </div>
+              <b-input class="column is-4" v-model="params.height"></b-input>
+            </div>
+          </div>
+        </div>
+        <div class="s-row">
+          <div class="s-grid-item">
+            <b-field>
+              <b-switch v-model="params.fullPage" type="is-info">
+                FullSize
+              </b-switch>
+              <b-tooltip type="is-success is-dark" position="is-bottom">
                 <template v-slot:content>
                   <div class="text-base">
-                    Delay capturing the screenshot.<br />
-                    Useful when the site does things after<br />
-                    load that you want to capture.
+                    <b>Unchecked:</b> Crop the screenshot to the viewport size
+                    <br />
+                    <b>Checked:</b> Takes screenshot of the entire page
                   </div>
                 </template>
                 <b-icon
-                  type="is-white"
+                  type="is-success"
                   icon="information-outline"
                   size="is-small"
                 >
-                </b-icon> </b-tooltip
-            ></label>
-            <b-input
-              class="column is-4"
-              rounded
-              type="number"
-              min="1"
-              max="15"
-              v-model="params.delay"
-            ></b-input>
+                </b-icon>
+              </b-tooltip>
+            </b-field>
           </div>
-
-          <label class="label"
-            >Width:
-            <b-tooltip type="is-success is-light" position="is-bottom">
-              <template v-slot:content>
-                <div class="text-base">Width of the screenshot in pixels.</div>
-              </template>
-              <b-icon
-                type="is-white"
-                icon="information-outline"
-                size="is-small"
-              >
-              </b-icon>
-            </b-tooltip>
-          </label>
-          <div class="columns">
-            <div class="column">
-              <b-field>
-                <b-slider
-                  type="is-danger"
-                  v-model="params.width"
-                  :max="8000"
-                  :min="240"
-                  lazy
-                  size="is-medium"
-                ></b-slider>
-              </b-field>
+          <div class="s-grid-item">
+            <b-field>
+              <b-switch v-model="params.darkMode" type="is-info">
+                DarkMode
+              </b-switch>
+              <b-tooltip type="is-success is-dark" position="is-bottom">
+                <template v-slot:content>
+                  <div class="text-base">
+                    <b>Unchecked:</b> Light mode
+                    <br />
+                    <b>Checked:</b> Dark mode
+                  </div>
+                </template>
+                <b-icon
+                  type="is-success"
+                  icon="information-outline"
+                  size="is-small"
+                >
+                </b-icon>
+              </b-tooltip>
+            </b-field>
+          </div>
+          <div class="s-grid-item">
+            <b-field>
+              <b-switch v-model="params.save" type="is-info">
+                Save content
+              </b-switch>
+              <b-tooltip type="is-success is-dark" position="is-bottom">
+                <template v-slot:content>
+                  <div class="text-base">
+                    <b>Unchecked:</b> Doesn't save to server
+                    <br />
+                    <b>Checked:</b> Save to server
+                  </div>
+                </template>
+                <b-icon
+                  type="is-success"
+                  icon="information-outline"
+                  size="is-small"
+                >
+                </b-icon>
+              </b-tooltip>
+            </b-field>
+          </div>
+        </div>
+        <div class="s-row">
+          <div class="s-grid-item">
+            <div class="flex items-center">
+              <label
+                >Delay in seconds:
+                <b-tooltip type="is-success is-dark" position="is-bottom">
+                  <template v-slot:content>
+                    <div class="text-base">
+                      Delay capturing the screenshot.<br />
+                      Useful when the site does things after<br />
+                      load that you want to capture.
+                    </div>
+                  </template>
+                  <b-icon
+                    type="is-success"
+                    icon="information-outline"
+                    size="is-small"
+                  >
+                  </b-icon> </b-tooltip
+              ></label>
+              <b-input
+                class="column is-4"
+                type="number"
+                min="1"
+                max="15"
+                v-model="params.delay"
+              ></b-input>
             </div>
-            <b-input
-              class="column is-4"
-              rounded
-              v-model="params.width"
-            ></b-input>
           </div>
-
-          <label class="label"
-            >Height:
-            <b-tooltip type="is-success is-light" position="is-bottom">
-              <template v-slot:content>
-                <div class="text-base">Height of the screenshot in pixels.</div>
-              </template>
-              <b-icon
-                type="is-white"
-                icon="information-outline"
-                size="is-small"
-              >
-              </b-icon>
-            </b-tooltip>
-          </label>
-          <div class="columns">
-            <div class="column">
-              <b-field>
-                <b-slider
-                  type="is-danger"
-                  v-model="params.height"
-                  :max="8000"
-                  :min="240"
-                  lazy
-                  size="is-medium"
-                ></b-slider>
-              </b-field>
+          <div class="s-grid-item">
+            <label class="label"
+              >Scale:
+              <b-tooltip type="is-success is-dark" position="is-bottom">
+                <template v-slot:content>
+                  <div class="text-base">
+                    Scale of the screenshot. [10% - 100%]<br />
+                    (default: 100%).
+                  </div>
+                </template>
+                <b-icon
+                  type="is-success"
+                  icon="information-outline"
+                  size="is-small"
+                >
+                </b-icon>
+              </b-tooltip>
+            </label>
+            <div class="columns">
+              <div class="column">
+                <b-field>
+                  <b-slider
+                    type="is-info"
+                    v-model="params.scale"
+                    :max="100"
+                    :min="10"
+                  ></b-slider>
+                </b-field>
+              </div>
+              <b-input
+                class="column is-4"
+                rounded
+                v-model="params.scale"
+              ></b-input>
             </div>
-            <b-input
-              class="column is-4"
-              rounded
-              v-model="params.height"
-            ></b-input>
           </div>
-
-          <label class="label"
-            >Browser size:
-
-            <b-tooltip type="is-success is-light" position="is-bottom">
-              <template v-slot:content>
-                <div class="text-base">
-                  Size of the browser window in pixels. [width x height]
-                </div>
-              </template>
-              <b-icon
-                type="is-white"
-                icon="information-outline"
-                size="is-small"
-              >
-              </b-icon>
-            </b-tooltip>
-          </label>
-          <p class="text-lg font-semibold text-center text-white">
-            {{ params.width }} x {{ params.height }} px
-          </p>
-
-          <template v-if="!params.enablePdf">
-            <p class="mt-4 title is-5">⚙️ Image options</p>
-
+          <div class="s-grid-item" v-if="selectedType == 'img'">
             <b-field label="Format:">
               <template #label>
                 Format:
-                <b-tooltip type="is-success is-light" position="is-bottom">
+                <b-tooltip type="is-success is-dark" position="is-bottom">
                   <template v-slot:content>
                     <div class="text-base">
                       Format of the screenshot (PNG | JPEG | WEBP).<br />
@@ -309,7 +282,7 @@
                     </div>
                   </template>
                   <b-icon
-                    type="is-white"
+                    type="is-success"
                     icon="information-outline"
                     size="is-small"
                   >
@@ -326,110 +299,53 @@
                   :value="option"
                   :key="option"
                 >
-                  {{ option }}
+                  .{{ option }}
                 </option>
               </b-select>
             </b-field>
-
-            <label class="label"
-              >Scale:
-              <b-tooltip type="is-success is-light" position="is-bottom">
-                <template v-slot:content>
-                  <div class="text-base">
-                    Scale of the screenshot. [10% - 100%]<br />
-                    (default: 100%).
-                  </div>
-                </template>
-                <b-icon
-                  type="is-white"
-                  icon="information-outline"
-                  size="is-small"
-                >
-                </b-icon>
-              </b-tooltip>
-            </label>
-            <div class="columns">
-              <div class="column">
-                <b-field>
-                  <b-slider
-                    type="is-danger"
-                    v-model="params.scale"
-                    :max="100"
-                    :min="10"
-                    size="is-medium"
-                  ></b-slider>
-                </b-field>
-              </div>
-              <b-input
-                class="column is-4"
-                rounded
-                v-model="params.scale"
-              ></b-input>
-            </div>
-
-            <label class="label"
-              >image size:
-              <b-tooltip type="is-success is-light" position="is-bottom">
-                <template v-slot:content>
-                  <div class="text-base">
-                    Size of the image in pixels. [width x height]<br />
-                    (default: original size)
-                  </div>
-                </template>
-                <b-icon
-                  type="is-white"
-                  icon="information-outline"
-                  size="is-small"
-                >
-                </b-icon> </b-tooltip
-            ></label>
-            <p class="text-lg font-semibold text-center text-white">
-              {{ (params.scale * params.width) / 100 }} x
-              {{ (params.scale * params.height) / 100 }} px
-            </p>
-          </template>
-        </div>
-      </div>
-      <div class="column" style="height: 910px">
-        <div class="h-full overflow-y-auto box bg-blueGray-900">
-          <p class="title is-5">Website Screenshot</p>
-          <div v-if="!result" class="mb-3">
-            <p class="title is-4">Capture a website screenshot online</p>
-            <p class="mt-4 text-white subtitle is-6">
-              Generate a full web-page screenshot with our service Site-Shot:
-              Web page screenshot service, that provides rich interface to make
-              any kind of web screenshots online for free with no limits. The
-              simplest way to take a full page screenshot, we support a long
-              pages up to 20000 pixels
-            </p>
           </div>
-          <b-progress v-if="loading" type="is-danger"></b-progress>
-
-          <img
-            class="cursor-pointer"
-            v-if="result && !loading"
-            :src="result.image"
-            :alt="result.filename"
-            @click="openImage(result)"
-          />
-
-          <embed
-            v-if="pdfSrc"
-            :src="pdfSrc"
-            width="100%"
-            height="100%"
-            type="application/pdf"
-          />
+          <div class="s-grid-item" v-if="selectedType == 'pdf'">
+            <b-field label="PDF Formats:">
+              <template #label>
+                PDF Formats:
+                <b-tooltip type="is-success is-dark" position="is-bottom">
+                  <template v-slot:content>
+                    <div class="text-base">
+                      Paper Format in which the pdf will be genrated<br />
+                      based on. select Resolution for [width x height] format.
+                    </div>
+                  </template>
+                  <b-icon
+                    type="is-success"
+                    icon="information-outline"
+                    size="is-small"
+                  >
+                  </b-icon>
+                </b-tooltip>
+              </template>
+              <b-select
+                v-model="params.pdf.format"
+                expanded
+                placeholder="Select a character"
+              >
+                <option
+                  :value="format"
+                  v-for="(format, index) in pdfFormats"
+                  :key="index"
+                >
+                  {{ format }}
+                </option>
+              </b-select>
+            </b-field>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="columns">
-      <div class="column">
-        <div class="box bg-blueGray-900">
+      <div class="s-grid" v-if="loadStyleScript">
+        <div class="col-span-6 p-4">
           <label class="label column"
             >Script:
-            <b-tooltip type="is-success is-light" position="is-bottom">
+            <b-tooltip type="is-success is-dark" position="is-bottom">
               <template v-slot:content>
                 <div class="text-base">
                   Loads the script in the browser before taking<br />
@@ -438,27 +354,29 @@
                 </div>
               </template>
               <b-icon
-                type="is-white"
+                type="is-success"
                 icon="information-outline"
                 size="is-small"
               >
               </b-icon> </b-tooltip
           ></label>
-          <CodeEditor
-            :wrap_code="true"
-            max_width="auto"
-            width="auto"
-            :copy_code="false"
-            v-model="params.script"
-            height="250px"
-          ></CodeEditor>
+          <client-only>
+            <CodeEditor
+              theme="light"
+              class="border rounded-lg border-border"
+              :wrap_code="true"
+              max_width="auto"
+              width="auto"
+              :copy_code="false"
+              v-model="params.script"
+              height="250px"
+            ></CodeEditor>
+          </client-only>
         </div>
-      </div>
-      <div class="column">
-        <div class="box bg-blueGray-900">
+        <div class="col-span-6 p-4">
           <label class="label column"
             >Style:
-            <b-tooltip type="is-success is-light" position="is-bottom">
+            <b-tooltip type="is-success is-dark" position="is-bottom">
               <template v-slot:content>
                 <div class="text-base">
                   Loads the style in the browser before taking<br />
@@ -467,39 +385,105 @@
                 </div>
               </template>
               <b-icon
-                type="is-white"
+                type="is-success"
                 icon="information-outline"
                 size="is-small"
               >
               </b-icon> </b-tooltip
           ></label>
-          <CodeEditor
-            :languages="[['css', 'CSS']]"
-            :wrap_code="true"
-            max_width="auto"
-            width="auto"
-            :copy_code="false"
-            v-model="params.style"
-            height="250px"
-          ></CodeEditor>
+          <client-only>
+            <CodeEditor
+              theme="light"
+              class="border rounded-lg border-border"
+              :languages="[['css', 'CSS']]"
+              :wrap_code="true"
+              max_width="auto"
+              width="auto"
+              :copy_code="false"
+              v-model="params.style"
+              height="250px"
+            ></CodeEditor>
+          </client-only>
         </div>
+      </div>
+
+      <div class="flex items-center justify-end m-4 space-x-4">
+        <b-button
+          v-if="result.url"
+          icon-left="download-outline"
+          @click="download"
+          type="is-success is-light"
+          class="border !border-lime-500 !border-dashed"
+          :disabled="loading || !params.url"
+          >Dowload Content</b-button
+        >
+
+        <b-button
+          icon-left="palette-swatch"
+          @click="loadStyleScript = !loadStyleScript"
+          type="is-info is-light"
+          class="border !border-primary-100"
+          >Add Scripts/Styles</b-button
+        >
+
+        <b-button
+          icon-left="camera-iris"
+          @click="generateScreenshot"
+          type="is-info"
+          class="border !border-primary-100"
+          :disabled="loading || !params.url"
+          >Capture Screenshot</b-button
+        >
+      </div>
+
+      <div class="h-full overflow-y-auto box bg-blueGray-900">
+        <p class="title is-5">Website Screenshot</p>
+        <div v-if="!result.url" class="mb-3">
+          <p class="title is-4">Capture a website screenshot online</p>
+          <p class="mt-4 text-white subtitle is-6">
+            Generate a full web-page screenshot with our service Site-Shot: Web
+            page screenshot service, that provides rich interface to make any
+            kind of web screenshots online for free with no limits. The simplest
+            way to take a full page screenshot, we support a long pages up to
+            20000 pixels
+          </p>
+        </div>
+        <b-progress v-if="loading" type="is-info"></b-progress>
+
+        <embed
+          v-if="result.url"
+          :src="result.url"
+          width="100%"
+          style="height: 50vh"
+        />
       </div>
     </div>
   </section>
 </template>
 
 <script>
-import CodeEditor from "simple-code-editor";
-
 export default {
   name: "IndexPage",
-  components: {
-    CodeEditor,
-  },
   data() {
     return {
+      types: [
+        {
+          value: "img",
+          name: "image",
+          label: "Image",
+          icon: "image",
+        },
+        {
+          value: "pdf",
+          name: "pdf",
+          label: "PDF",
+          icon: "pdf",
+        },
+      ],
+      selectedType: "img",
+      loadStyleScript: false,
       params: {
-        url: null,
+        url: "https://github.com/Flowko",
         size: "1920x1080",
         fullPage: true,
         darkMode: false,
@@ -509,7 +493,6 @@ export default {
         height: 1080,
         scale: 100,
         save: false,
-        enablePdf: false,
         pdf: {
           format: "resolution",
           landscape: false,
@@ -520,34 +503,107 @@ export default {
         } */`,
       },
       imageFormats: ["png", "jpeg", "webp"],
-      pdfSrc: null,
-      result: null,
+      pdfFile: null,
+      result: {
+        url: null,
+        filename: null,
+      },
       loading: false,
       resolutions: [
         {
-          label: "Large",
-          resolutions: ["1920x1080", "1600x1200", "1440x1080", "1280x1024"],
-        },
-        {
           label: "Desktop",
           resolutions: [
-            "1280x1280",
-            "1024x1024",
-            "800x800",
-            "640x640",
-            "512x512",
-            "400x400",
-            "320x320",
-            "240x240",
+            {
+              label: "QVGA",
+              value: "320x240",
+            },
+            {
+              label: "VGA",
+              value: "640x480",
+            },
+            {
+              label: "SVGA",
+              value: "800x600",
+            },
+            {
+              label: "HD",
+              value: "1280x720",
+            },
+            {
+              label: "SXGA",
+              value: "1280x1024",
+            },
+            {
+              label: "HD+",
+              value: "1600x900",
+            },
+            {
+              label: "FHD",
+              value: "1920x1080",
+            },
+            {
+              label: "2K",
+              value: "2048x1080",
+            },
+            {
+              label: "4K UHD",
+              value: "3840x2160",
+            },
           ],
         },
         {
-          label: "Tablet",
-          resolutions: ["1024x768", "800x600", "768x1024", "600x800"],
+          label: "Android Devices",
+          resolutions: [
+            {
+              label: "Galaxy S7/S7edge/S6",
+              value: "320x240",
+            },
+            {
+              label: "Galaxy S8/S8+/Note8/S9",
+              value: "360x740",
+            },
+            {
+              label: "Galaxy S10",
+              value: "360x760",
+            },
+            {
+              label: "Google Pixel, Pixel 2",
+              value: "411x731",
+            },
+            {
+              label: "Google Glass",
+              value: "427x240",
+            },
+            {
+              label: "Kindle Fire",
+              value: "800x1280",
+            },
+          ],
         },
         {
-          label: "Mobile",
-          resolutions: ["320x480", "480x320", "320x320", "480x480"],
+          label: "iOS Devices",
+          resolutions: [
+            {
+              label: "iPhone X, XS",
+              value: "375x812",
+            },
+            {
+              label: "iPhone 6+, 6s+, 7+, 8+",
+              value: "414x736",
+            },
+            {
+              label: "iPhone XR, iPhone XS Max",
+              value: "414x896",
+            },
+            {
+              label: "iPad 3, 4, Air, Air2, Pro 9.7",
+              value: "768x1024",
+            },
+            {
+              label: "iPad Pro 12.9",
+              value: "1024x1366",
+            },
+          ],
         },
       ],
       pdfFormats: [
@@ -567,31 +623,49 @@ export default {
     async generateScreenshot() {
       if (!this.loading && this.params.url !== null) {
         this.loading = true;
-        this.result = null;
-        this.pdfSrc = null;
+        this.result = {
+          url: null,
+          filename: null,
+        };
+        this.pdfFile = null;
+        const selectedType = this.selectedType;
+        let mimeType = "";
+        const format = this.params.format;
+        if (selectedType === "img") {
+          mimeType = `image/${format}`;
+        } else if (selectedType === "pdf") {
+          mimeType = `application/pdf`;
+        }
 
         await this.$axios
-          .$post(
+          .post(
             "/api/screenshot",
             {
               ...this.params,
               scale: this.params.scale / 100,
               size: [this.params.size],
+              type: selectedType,
+              mimeType,
             },
             {
-              responseType: this.params.enablePdf ? "blob" : null,
+              responseType: "blob",
             }
           )
           .then((response) => {
-            if (this.params.enablePdf) {
-              let blob = new window.Blob([response], {
-                type: "application/pdf",
-              });
-              this.pdfSrc = window.URL.createObjectURL(blob);
-            } else {
-              this.result = response;
-            }
+            let blob = new window.Blob([response.data], {
+              type: mimeType,
+            });
 
+            let headerLine = response.headers["content-disposition"];
+            let startFileNameIndex = headerLine.indexOf('"') + 1;
+            let endFileNameIndex = headerLine.lastIndexOf('"');
+            let filename = headerLine.substring(
+              startFileNameIndex,
+              endFileNameIndex
+            );
+
+            this.result.url = window.URL.createObjectURL(blob);
+            this.result.filename = filename;
             this.loading = false;
           })
           .catch((error) => {
@@ -600,14 +674,12 @@ export default {
           });
       }
     },
-    openImage(result) {
-      if (result) {
-        let w = window.open("about:blank");
-        let image = new Image();
-        image.src = result.image;
-        setTimeout(function () {
-          w.document.write(image.outerHTML);
-        }, 0);
+    download() {
+      if (this.result) {
+        const link = document.createElement("a");
+        link.href = this.result.url;
+        link.download = this.result.filename;
+        link.click();
       }
     },
   },
