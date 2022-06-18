@@ -483,7 +483,7 @@ export default {
       selectedType: "img",
       loadStyleScript: false,
       params: {
-        url: "https://github.com/Flowko",
+        url: null,
         size: "1920x1080",
         fullPage: true,
         darkMode: false,
