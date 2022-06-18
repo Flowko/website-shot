@@ -13,6 +13,9 @@ import template from "lodash.template";
 import filenamifyUrl from "filenamify-url";
 import { parse as parseUrl } from "url";
 import filenamify from "filenamify";
+import pMap from "p-map";
+import got from "got";
+import JSZip from "jszip";
 
 require("dotenv").config();
 app.use(bodyParser.json());
@@ -25,16 +28,16 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-function generateFilename(options) {
-  let hash = parseUrl(options.url).hash ?? "";
+function generateFilename(options, url) {
+  let hash = parseUrl(url || options.url).hash ?? "";
   if (/^#!?\/?$/.test(hash)) {
     hash = "";
   }
 
   const now = Date.now();
-  const basename = fs.existsSync(options.url)
-    ? path.basename(options.url)
-    : options.url;
+  const basename = fs.existsSync(url || options.url)
+    ? path.basename(url || options.url)
+    : url || options.url;
 
   const filenameTemplate = template(`${options.filename}.${options.format}`);
   let filename = filenameTemplate({
@@ -55,6 +58,25 @@ function generateFilename(options) {
   };
 }
 
+var CustomBufferBuilder = function () {
+  this.parts = [];
+  this.totalLength = 0;
+};
+
+CustomBufferBuilder.prototype.append = function (part) {
+  var tempBuffer = Buffer.from(part);
+  this.parts.push(tempBuffer);
+  this.totalLength += tempBuffer.length;
+  this.buffer = undefined;
+};
+
+CustomBufferBuilder.prototype.getBuffer = function () {
+  if (!this.buffer) {
+    this.buffer = Buffer.concat(this.parts, this.totalLength);
+  }
+  return this.buffer;
+};
+
 app.post("/screenshot", async (req, res) => {
   const params = req.body;
 
@@ -72,6 +94,7 @@ app.post("/screenshot", async (req, res) => {
 
     var options = {
       url: params.url,
+      urls: params.urls,
       size: params.size || "1920x1080",
       fullPage: params.fullPage,
       darkMode: params.darkMode,
@@ -113,37 +136,106 @@ app.post("/screenshot", async (req, res) => {
       options.launchOptions.executablePath = "/usr/bin/chromium-browser";
     }
 
-    const { filename, filepath } = await generateFilename(options);
     const mimeType = params.mimeType;
-    await captureWebsite
-      .buffer(options.url, options)
-      .then(async (buffer) => {
-        if (options.save) {
-          await makeDir(__dirname + "/../screenshots");
-          await fs.writeFileSync(filepath, buffer);
+
+    if (
+      params.urls &&
+      params.urls.length > 0 &&
+      params.type == "multiple-imgs"
+    ) {
+      var zip = new JSZip();
+
+      const mapper = async (site) => {
+        const { filename, filepath } = await generateFilename(
+          options,
+          site.url
+        );
+        // const { requestUrl } = await got.head(site);
+        // return requestUrl;
+
+        console.log(filename);
+
+        await captureWebsite
+          .buffer(site.url, options)
+          .then(async (buffer) => {
+            var customBufferBuilder = new CustomBufferBuilder();
+            customBufferBuilder.append(buffer);
+            var bufferContent = customBufferBuilder.getBuffer();
+            await zip.file(filename, bufferContent, { binary: true });
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+
+        return;
+      };
+
+      await pMap(params.urls, mapper, { concurrency: 2 });
+      zip.generateAsync({ type: "nodebuffer", compression: "DEFLATE" }).then(
+        async function callback(buffer) {
+          if (options.save) {
+            const filepathZip = path.join(
+              __dirname + "/../screenshots",
+              "screenshots.zip"
+            );
+            await makeDir(__dirname + "/../screenshots");
+            await fs.writeFileSync(filepathZip, buffer);
+          }
+
+          const readStream = new stream.PassThrough();
+          readStream.end(buffer);
+
+          res.contentType("application/zip");
+
+          res.setHeader(
+            "Content-Disposition",
+            `attachment; filename="screenshots.zip"`
+          );
+          res.setHeader("Access-Control-Expose-Headers", "Content-Disposition");
+          res.setHeader("Content-Length", buffer.length);
+          res.setHeader("Access-Control-Allow-Origin", "*");
+          res.setHeader(
+            "Access-Control-Allow-Headers",
+            "Content-Type, Authorization, Content-Length, X-Requested-With, Content-Disposition"
+          );
+          readStream.pipe(res);
+        },
+        function (e) {
+          console.log(e);
         }
+      );
+    } else {
+      const { filename, filepath } = await generateFilename(options);
+      await captureWebsite
+        .buffer(options.url, options)
+        .then(async (buffer) => {
+          if (options.save) {
+            await makeDir(__dirname + "/../screenshots");
+            await fs.writeFileSync(filepath, buffer);
+          }
 
-        const readStream = new stream.PassThrough();
-        readStream.end(buffer);
+          const readStream = new stream.PassThrough();
+          readStream.end(buffer);
 
-        res.contentType(mimeType);
+          res.contentType(mimeType);
 
-        res.setHeader(
-          "Content-Disposition",
-          `attachment; filename="${filename}"`
-        );
-        res.setHeader("Access-Control-Expose-Headers", "Content-Disposition");
-        res.setHeader("Content-Length", buffer.length);
-        res.setHeader("Access-Control-Allow-Origin", "*");
-        res.setHeader(
-          "Access-Control-Allow-Headers",
-          "Content-Type, Authorization, Content-Length, X-Requested-With, Content-Disposition"
-        );
-        readStream.pipe(res);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+          res.setHeader(
+            "Content-Disposition",
+            `attachment; filename="${filename}"`
+          );
+          res.setHeader("Access-Control-Expose-Headers", "Content-Disposition");
+          res.setHeader("Content-Length", buffer.length);
+          res.setHeader("Access-Control-Allow-Origin", "*");
+          res.setHeader(
+            "Access-Control-Allow-Headers",
+            "Content-Type, Authorization, Content-Length, X-Requested-With, Content-Disposition"
+          );
+          readStream.pipe(res);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   } else {
     res.status(500).json({ succes: false, result: "No url provided!" });
   }
