@@ -80,7 +80,11 @@ CustomBufferBuilder.prototype.getBuffer = function () {
 app.post("/screenshot", async (req, res) => {
   const params = req.body;
 
-  if (params.url) {
+  if (
+    params &&
+    ((params.type == "multiple-imgs" && params.urls[0].url != null) ||
+      params.url != null)
+  ) {
     const styles = [];
     const scripts = [];
 
@@ -153,15 +157,19 @@ app.post("/screenshot", async (req, res) => {
         // const { requestUrl } = await got.head(site);
         // return requestUrl;
 
-        console.log(filename);
-
         await captureWebsite
           .buffer(site.url, options)
           .then(async (buffer) => {
             var customBufferBuilder = new CustomBufferBuilder();
             customBufferBuilder.append(buffer);
             var bufferContent = customBufferBuilder.getBuffer();
-            await zip.file(filename, bufferContent, { binary: true });
+            var newFilename = !params.keepUrlStructure
+              ? filename
+              : filename.replaceAll("!", "/");
+            await zip.file(newFilename, bufferContent, {
+              binary: true,
+              createFolders: true,
+            });
           })
           .catch((error) => {
             console.log(error);

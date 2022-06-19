@@ -60,6 +60,28 @@
             class="border !border-red-500"
           ></b-button>
         </div>
+        <b-field>
+          <b-checkbox type="is-info" v-model="params.keepUrlStructure">
+            Use Same URL Original Structure
+            <b-tooltip type="is-success is-dark" position="is-bottom">
+              <template v-slot:content>
+                <div class="text-base">
+                  <b>Unchecked:</b> Saves screenshots of all pages in the same
+                  parent folder.
+                  <br />
+                  <b>Checked:</b> Saves screenshots of all pages in their own
+                  folders.
+                </div>
+              </template>
+              <b-icon
+                type="is-success"
+                icon="information-outline"
+                size="is-small"
+              >
+              </b-icon>
+            </b-tooltip>
+          </b-checkbox>
+        </b-field>
       </div>
 
       <div class="s-grid">
@@ -463,7 +485,6 @@
           @click="generateScreenshot"
           type="is-info"
           class="border !border-primary-100"
-          :disabled="loading || !params.url"
           >Capture Screenshot</b-button
         >
       </div>
@@ -544,6 +565,7 @@ export default {
             url: null,
           },
         ],
+        keepUrlStructure: false,
       },
       imageFormats: ["png", "jpeg", "webp"],
       pdfFile: null,
@@ -659,12 +681,17 @@ export default {
         "Letter",
         "Legal",
       ],
+      disableBtn: true,
     };
   },
   mounted() {},
   methods: {
     async generateScreenshot() {
-      if (!this.loading && this.params.url !== null) {
+      if (
+        this.selectedType == "multiple-imgs" ||
+        !this.loading ||
+        this.params.url !== null
+      ) {
         this.loading = true;
         this.result = {
           url: null,
@@ -754,6 +781,14 @@ export default {
     },
     "params.height"() {
       this.params.size = `${this.params.width}x${this.params.height}`;
+    },
+    selectedType() {
+      this.params.url = null;
+      this.params.urls = [
+        {
+          url: null,
+        },
+      ];
     },
   },
 };
