@@ -12,7 +12,6 @@ Generate a full web-page screenshot with our service, that provides rich interfa
 - [Tailwind](https://tailwindcss.com/)
 - [Buefy](https://buefy.org/documentation/start/)
 
-⚠️ Note that the app is hosted for free, so if u are facing issues taking screenshot, just give it a bit of time (well be hosted on a paid server if its being used more by users)
 <br/>
 ⚠️ It can't take screenshots of pages where authentication is required. Personal bank pages, E-Mail Inboxes or any other page that requires you to log in to see it, it may require using custom js to paypass that.
 
