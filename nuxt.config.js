@@ -1,4 +1,5 @@
 export default {
+  ssr: false,
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     title: "Website-Shot | Home",
@@ -15,8 +16,6 @@ export default {
     ],
     link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
   },
-
-  target: "static",
 
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: ["~/assets/css/main.scss"],
