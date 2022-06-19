@@ -1,34 +1,48 @@
-# 📸 Self Hosted Website Shot - Capture a website screenshot online
+<p align="center">
+  <a href="#">
+    
+  </a>
 
-
-
-Generate a full web-page screenshot with our service, that provides rich interface to make any kind of web screenshots online for free with no limits. The simplest way to take a full page screenshot, we support a long pages up to 20000 pixels
-
-[📰 View Noted Article about the app](https://noted.lol/take-full-website-screenshots-with-the-self-hosted-website-shot/)
-
-🏗️ Built with:
-
-- [Nuxtjs](https://nuxtjs.org/)
-- [Tailwind](https://tailwindcss.com/)
-- [Buefy](https://buefy.org/documentation/start/)
-
+  <p align="center">
+   <img width="150" height="150" src="https://user-images.githubusercontent.com/35883748/174504679-231434c3-0cfa-4f2c-a483-368e8f9d1dcc.png" alt="Logo">
+  </p>
+  <h1 align="center"><b>Website Shot</b></h1>
+  <p align="center">
+  Capture a website screenshot online.
+    <br />
+    <a href="https://noted.lol/take-full-website-screenshots-with-the-self-hosted-website-shot/"><strong>View Noted Article about the app »</strong></a>
+    <br />
+    <br />
+  </p>
+</p>
+Website Shot is an open source cross-platform screenshot app, powered by a nodejs and nuxtjs written in JS/Vue. 
 <br/>
-⚠️ It can't take screenshots of pages where authentication is required. Personal bank pages, E-Mail Inboxes or any other page that requires you to log in to see it, it may require using custom js to paypass that.
+<br/>
 
 
+> NOTE: Website Shot is under active development, most of the listed features are still experimental and subject to change.
+> 
+> It can't take screenshots of pages where authentication is required. Personal bank pages, E-Mail Inboxes or any other page that requires you to log in to see it, it may require using custom js to paypass that.
+<br/>
+<br/>
 
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/35883748/174443804-83ff76aa-1b7b-430b-914d-2330b72a7084.png" alt="Logo">
+  <br />
+  <br />
 
-![Website shoy Demo](https://user-images.githubusercontent.com/35883748/174443804-83ff76aa-1b7b-430b-914d-2330b72a7084.png)
+  <img src="https://img.shields.io/github/v/release/Flowko/website-shot?color=2BB4AB" />
+  <img src="https://img.shields.io/github/issues-closed-raw/Flowko/website-shot?color=0974B4" />
+  <br />
+</p>
 
-
-
-## Docker
+# Docker
 ```bash
 docker pull flowko1/website-shot
 docker run -it -d -p 3000:3000 flowko1/website-shot
 ```
 
-## Build Setup
+# Build Setup
 
 ```bash
 # install dependencies
@@ -44,5 +58,3 @@ $ yarn start
 # generate static project
 $ yarn generate
 ```
-
-For detailed explanation on how things work, check out the [documentation](https://nuxtjs.org).
