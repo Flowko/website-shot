@@ -13,6 +13,7 @@ RUN npm install
 
 # copy the app, note .dockerignore
 COPY . /usr/src/website-shot/
+RUN npm run generate
 RUN npm run build
 
 EXPOSE 3000
