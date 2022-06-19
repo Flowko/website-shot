@@ -2,6 +2,7 @@
   <section class="py-20">
     <div class="flex flex-col bg-[#FAFBFB] rounded-md shadow-lg">
       <input
+        v-if="selectedType != 'multiple-imgs'"
         class="w-full p-3 transition-all ease-linear delay-75 border-2 rounded-md outline-none  focus:outline-none focus:border-primary-200 focus:border-dashed"
         @keyup.enter="generateScreenshot"
         placeholder="https://github.com/flowko..."
@@ -11,7 +12,7 @@
 
       <div class="flex items-center justify-center my-4 space-x-10">
         <div
-          class="flex flex-col items-center justify-center w-32 h-32 text-center transition-all ease-linear delay-150 bg-gray-200 cursor-pointer  rounded-2xl hover:bg-gray-300"
+          class="flex flex-col items-center justify-center w-32 h-32 text-center bg-gray-200 cursor-pointer  rounded-2xl hover:bg-gray-300"
           :class="{
             'border-primary-200 border-dashed border-2 shadow-md ':
               selectedType == type.value,
@@ -27,6 +28,37 @@
             :src="require(`../assets/icons/${type.icon}.svg`)"
             class="block w-8 mt-2"
           />
+        </div>
+      </div>
+
+      <div
+        class="flex flex-col p-4 space-y-3"
+        v-if="selectedType == 'multiple-imgs'"
+      >
+        <div
+          class="flex items-center space-x-4"
+          v-for="(url, index) in params.urls"
+          :key="index"
+        >
+          <input
+            class="w-full p-3 transition-all ease-linear delay-75 border-2 rounded-md outline-none  focus:outline-none focus:border-primary-200 focus:border-dashed"
+            :placeholder="`URL - ${index}`"
+            type="url"
+            v-model="url.url"
+          />
+
+          <b-button
+            icon-left="plus-outline"
+            @click="addUrl(params.urls)"
+            type="is-success is-light"
+            class="border !border-lime-400"
+          ></b-button>
+          <b-button
+            icon-left="close-outline"
+            @click="removeUrl(index, params.urls)"
+            type="is-danger is-light"
+            class="border !border-red-500"
+          ></b-button>
         </div>
       </div>
 
@@ -270,7 +302,7 @@
               ></b-input>
             </div>
           </div>
-          <div class="s-grid-item" v-if="selectedType == 'img'">
+          <div class="s-grid-item" v-if="selectedType != 'pdf'">
             <b-field label="Format:">
               <template #label>
                 Format:
@@ -304,7 +336,7 @@
               </b-select>
             </b-field>
           </div>
-          <div class="s-grid-item" v-if="selectedType == 'pdf'">
+          <div class="s-grid-item" v-else>
             <b-field label="PDF Formats:">
               <template #label>
                 PDF Formats:
@@ -474,6 +506,12 @@ export default {
           icon: "image",
         },
         {
+          value: "multiple-imgs",
+          name: "multiple-images",
+          label: "Multiple Images",
+          icon: "images",
+        },
+        {
           value: "pdf",
           name: "pdf",
           label: "PDF",
@@ -501,6 +539,11 @@ export default {
         style: `/* .test {
           color: #000;
         } */`,
+        urls: [
+          {
+            url: null,
+          },
+        ],
       },
       imageFormats: ["png", "jpeg", "webp"],
       pdfFile: null,
@@ -664,8 +707,16 @@ export default {
               endFileNameIndex
             );
 
-            this.result.url = window.URL.createObjectURL(blob);
-            this.result.filename = filename;
+            if (selectedType == "multiple-imgs") {
+              const link = document.createElement("a");
+              link.href = window.URL.createObjectURL(blob);
+              link.download = filename;
+              link.click();
+            } else {
+              this.result.url = window.URL.createObjectURL(blob);
+              this.result.filename = filename;
+            }
+
             this.loading = false;
           })
           .catch((error) => {
@@ -680,6 +731,16 @@ export default {
         link.href = this.result.url;
         link.download = this.result.filename;
         link.click();
+      }
+    },
+    addUrl(urls) {
+      urls.push({
+        url: "",
+      });
+    },
+    removeUrl(index, urls) {
+      if (urls.length > 1) {
+        urls.splice(index, 1);
       }
     },
   },
