@@ -22,6 +22,8 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    { src: "~/plugins/axios.js" },
+    { src: "~/plugins/utils.js" },
     { src: "~/plugins/underscore.js", ssr: false },
     { src: "~/plugins/code-editor.js", ssr: false, mode: "client" },
   ],
@@ -30,7 +32,18 @@ export default {
   components: true,
 
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
-  buildModules: ["@nuxtjs/tailwindcss", "@nuxtjs/google-fonts", "@nuxtjs/svg"],
+  buildModules: [
+    "@nuxtjs/tailwindcss",
+    "@nuxtjs/google-fonts",
+    "@nuxtjs/svg",
+    [
+      "nuxt-tailvue",
+      {
+        all: true,
+        toast: { defaults: { containerClasses: ["top-auto", "bottom-0"] } },
+      },
+    ],
+  ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [

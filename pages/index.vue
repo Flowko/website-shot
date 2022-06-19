@@ -463,7 +463,7 @@
 
       <div class="flex items-center justify-end m-4 space-x-4">
         <b-button
-          v-if="result.url"
+          v-if="result && result.url"
           icon-left="download-outline"
           @click="download"
           type="is-success is-light"
@@ -491,7 +491,7 @@
 
       <div class="h-full overflow-y-auto box bg-blueGray-900">
         <p class="title is-5">Website Screenshot</p>
-        <div v-if="!result.url" class="mb-3">
+        <div v-if="result == null" class="mb-3">
           <p class="title is-4">Capture a website screenshot online</p>
           <p class="mt-4 text-white subtitle is-6">
             Generate a full web-page screenshot with our service Site-Shot: Web
@@ -504,7 +504,7 @@
         <b-progress v-if="loading" type="is-info"></b-progress>
 
         <embed
-          v-if="result.url"
+          v-if="result && result.url"
           :src="result.url"
           width="100%"
           style="height: 50vh"
@@ -569,10 +569,7 @@ export default {
       },
       imageFormats: ["png", "jpeg", "webp"],
       pdfFile: null,
-      result: {
-        url: null,
-        filename: null,
-      },
+      result: null,
       loading: false,
       resolutions: [
         {
@@ -687,16 +684,9 @@ export default {
   mounted() {},
   methods: {
     async generateScreenshot() {
-      if (
-        this.selectedType == "multiple-imgs" ||
-        !this.loading ||
-        this.params.url !== null
-      ) {
+      if (!this.loading) {
         this.loading = true;
-        this.result = {
-          url: null,
-          filename: null,
-        };
+        this.result = null;
         this.pdfFile = null;
         const selectedType = this.selectedType;
         let mimeType = "";
@@ -708,40 +698,32 @@ export default {
         }
 
         await this.$axios
-          .post(
-            "/api/screenshot",
-            {
-              ...this.params,
-              scale: this.params.scale / 100,
-              size: [this.params.size],
-              type: selectedType,
-              mimeType,
-            },
-            {
-              responseType: "blob",
-            }
-          )
-          .then((response) => {
-            let blob = new window.Blob([response.data], {
+          .$post("/api/screenshot", {
+            ...this.params,
+            scale: this.params.scale / 100,
+            size: [this.params.size],
+            type: selectedType,
+            mimeType,
+          })
+          .then(({ base64, filename, success }) => {
+            const blob = new window.Blob([this.convertBase64ToBlob(base64)], {
               type: mimeType,
             });
 
-            let headerLine = response.headers["content-disposition"];
-            let startFileNameIndex = headerLine.indexOf('"') + 1;
-            let endFileNameIndex = headerLine.lastIndexOf('"');
-            let filename = headerLine.substring(
-              startFileNameIndex,
-              endFileNameIndex
-            );
-
             if (selectedType == "multiple-imgs") {
-              const link = document.createElement("a");
-              link.href = window.URL.createObjectURL(blob);
-              link.download = filename;
-              link.click();
+              this.download({
+                url: window.URL.createObjectURL(blob),
+                filename: filename,
+              });
             } else {
-              this.result.url = window.URL.createObjectURL(blob);
-              this.result.filename = filename;
+              this.result = {
+                url: window.URL.createObjectURL(blob),
+                filename,
+              };
+            }
+
+            if (success) {
+              this.$success("Screenshot generated successfully");
             }
 
             this.loading = false;
@@ -752,11 +734,11 @@ export default {
           });
       }
     },
-    download() {
-      if (this.result) {
+    download(result) {
+      if (result || this.result) {
         const link = document.createElement("a");
-        link.href = this.result.url;
-        link.download = this.result.filename;
+        link.href = result.url || this.result.url;
+        link.download = result.filename || this.result.filename;
         link.click();
       }
     },
@@ -769,6 +751,27 @@ export default {
       if (urls.length > 1) {
         urls.splice(index, 1);
       }
+    },
+    convertBase64ToBlob(base64Image) {
+      // Split into two parts
+      const parts = base64Image.split(";base64,");
+
+      // Hold the content type
+      const imageType = parts[0].split(":")[1];
+
+      // Decode Base64 string
+      const decodedData = window.atob(parts[1]);
+
+      // Create UNIT8ARRAY of size same as row data length
+      const uInt8Array = new Uint8Array(decodedData.length);
+
+      // Insert all character code into uInt8Array
+      for (let i = 0; i < decodedData.length; ++i) {
+        uInt8Array[i] = decodedData.charCodeAt(i);
+      }
+
+      // Return BLOB image after conversion
+      return new Blob([uInt8Array], { type: imageType });
     },
   },
   watch: {
@@ -784,6 +787,7 @@ export default {
     },
     selectedType() {
       this.params.url = null;
+      this.result = null;
       this.params.urls = [
         {
           url: null,
