@@ -52,6 +52,14 @@ app.post("/screenshot", async (req, res) => {
     scripts.push(params.script);
   }
 
+  var args = [
+    "--no-sandbox",
+    "--disable-setuid-sandbox",
+    params.proxy && params.proxy.length > 0
+      ? `--proxy-server=${params.proxy}`
+      : null,
+  ].filter((arg) => arg != null);
+
   var options = {
     url: params.url,
     urls: urls,
@@ -81,7 +89,7 @@ app.post("/screenshot", async (req, res) => {
         : false,
     launchOptions: {
       headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      args,
       product: "chrome",
       waitUntil: "load",
     },
