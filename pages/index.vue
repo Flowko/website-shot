@@ -3,7 +3,17 @@
     <div class="flex flex-col bg-[#FAFBFB] rounded-md shadow-lg">
       <input
         v-if="selectedType != 'multiple-imgs'"
-        class="w-full p-3 transition-all ease-linear delay-75 border-2 rounded-md outline-none  focus:outline-none focus:border-primary-200 focus:border-dashed"
+        class="
+          w-full
+          p-3
+          transition-all
+          ease-linear
+          delay-75
+          border-2
+          rounded-md
+          outline-none
+          focus:outline-none focus:border-primary-200 focus:border-dashed
+        "
         @keyup.enter="generateScreenshot"
         placeholder="https://github.com/flowko..."
         type="url"
@@ -12,7 +22,18 @@
 
       <div class="flex items-center justify-center my-4 space-x-10">
         <div
-          class="flex flex-col items-center justify-center w-32 h-32 text-center bg-gray-200 cursor-pointer  rounded-2xl hover:bg-gray-300"
+          class="
+            flex flex-col
+            items-center
+            justify-center
+            w-32
+            h-32
+            text-center
+            bg-gray-200
+            cursor-pointer
+            rounded-2xl
+            hover:bg-gray-300
+          "
           :class="{
             'border-primary-200 border-dashed border-2 shadow-md ':
               selectedType == type.value,
@@ -41,7 +62,17 @@
           :key="index"
         >
           <input
-            class="w-full p-3 transition-all ease-linear delay-75 border-2 rounded-md outline-none  focus:outline-none focus:border-primary-200 focus:border-dashed"
+            class="
+              w-full
+              p-3
+              transition-all
+              ease-linear
+              delay-75
+              border-2
+              rounded-md
+              outline-none
+              focus:outline-none focus:border-primary-200 focus:border-dashed
+            "
             :placeholder="`URL - ${index}`"
             type="url"
             v-model="url.url"
@@ -393,6 +424,29 @@
             </b-field>
           </div>
         </div>
+        <div class="s-row">
+          <div class="s-grid-item">
+            <div class="flex flex-col">
+              <label class="mb-2"
+                >Proxy:
+                <b-tooltip type="is-success is-dark" position="is-bottom">
+                  <template v-slot:content>
+                    <div class="text-base">
+                      Proxy to use for the screenshot.<br />
+                      (default: none)
+                    </div>
+                  </template>
+                  <b-icon
+                    type="is-success"
+                    icon="information-outline"
+                    size="is-small"
+                  >
+                  </b-icon> </b-tooltip
+              ></label>
+              <b-input v-model="params.proxy"></b-input>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="s-grid" v-if="loadStyleScript">
@@ -566,6 +620,7 @@ export default {
           },
         ],
         keepUrlStructure: false,
+        proxy: null,
       },
       imageFormats: ["png", "jpeg", "webp"],
       pdfFile: null,
