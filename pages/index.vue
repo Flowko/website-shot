@@ -515,13 +515,22 @@
         </div>
       </div>
 
-      <div class="flex items-center justify-end m-4 space-x-4">
+      <div
+        class="
+          flex flex-col
+          items-center
+          justify-end
+          m-4
+          space-x-0 space-y-4
+          md:space-x-4 md:flex-row md:space-y-0
+        "
+      >
         <b-button
           v-if="result && result.url"
           icon-left="download-outline"
           @click="download"
           type="is-success is-light"
-          class="border !border-lime-500 !border-dashed"
+          class="border !border-lime-500 !border-dashed w-full md:w-auto"
           :disabled="loading || !params.url"
           >Dowload Content</b-button
         >
@@ -530,7 +539,7 @@
           icon-left="palette-swatch"
           @click="loadStyleScript = !loadStyleScript"
           type="is-info is-light"
-          class="border !border-primary-100"
+          class="border !border-primary-100 w-full md:w-auto"
           >Add Scripts/Styles</b-button
         >
 
@@ -538,7 +547,7 @@
           icon-left="camera-iris"
           @click="generateScreenshot"
           type="is-info"
-          class="border !border-primary-100"
+          class="border !border-primary-100 w-full md:w-auto"
           >Capture Screenshot</b-button
         >
       </div>
