@@ -427,9 +427,11 @@
         <div class="s-row">
           <div class="s-grid-item" v-if="$config.passwordEnabled">
             <label class="label">Password: </label>
-            <div class="columns">
-              <b-input class="column" v-model="password"></b-input>
-            </div>
+            <b-input
+              v-model="password"
+              type="password"
+              password-reveal
+            ></b-input>
           </div>
         </div>
       </div>
