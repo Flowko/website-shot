@@ -8,8 +8,6 @@ on:
 jobs:
   docker:
     runs-on: ubuntu-latest
-    needs:
-      - build
     steps:
       -
         name: "⛏️ Set up QEMU"
@@ -29,27 +27,8 @@ jobs:
         with:
           push: true
           tags: flowko1/website-shot:latest
-
-  build:
-    name: Build application
-    runs-on: ubuntu-latest
-    steps:
-      - name: "☁️ checkout repository"
-        uses: actions/checkout@v3
-
-      - name: "🔧 setup node"
-        uses: actions/setup-node@v2.1.5
-        with:
-          node-version: 16
-
-      - name: "🔧 install npm@latest"
-        run: npm i -g npm@latest
-
-      - name: "📦 install dependencies"
-        uses: bahmutov/npm-install@v1
-
-      - name: "🚀 static app"
-        run: npm run build
+          cache-from: type=gha, scope=${{ github.workflow }}
+          cache-to: type=gha, scope=${{ github.workflow }}
 
   release:
     environment:
@@ -58,7 +37,6 @@ jobs:
     name: Semantic release
     needs:
       - docker
-      - build
     runs-on: ubuntu-latest
     steps:
       - name: "☁️ checkout repository"

@@ -40,6 +40,13 @@ Website Shot is an open source cross-platform screenshot app, powered by a nodej
 ```bash
 docker pull flowko1/website-shot
 docker run -it -d -p 3000:3000 flowko1/website-shot
+
+# to enable password protection | to disabled it set PASSWORD_PROTECT to 0
+# default password is admin
+docker run -it -d -p 3000:3000 -e PASSWORD_PROTECT=1 -e PASSWORD=yourpassword flowko1/website-shot
+
+# you'll notice a password field on the homepage, make sure to add the password there as well
+
 ```
 
 # Build Setup
