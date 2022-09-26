@@ -13,6 +13,21 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.post("/screenshot", async (req, res) => {
   const params = req.body;
+  const password = params.password;
+
+  if (
+    process.env.PASSWORD_PROTECT &&
+    Boolean(Number(process.env.PASSWORD_PROTECT))
+  ) {
+    if (!password || password !== process.env.PASSWORD) {
+      res.status(401).send({
+        error: "Unauthorized",
+        success: false,
+      });
+      return;
+    }
+  }
+
   const url = params.url ? params.url.toString().trim() : null;
   const urls = params.urls
     .filter((url) => {
@@ -92,9 +107,7 @@ app.post("/screenshot", async (req, res) => {
     },
   };
 
-  if (process.env.RUNNING_HEROKU == null) {
-    options.launchOptions.executablePath = "/usr/bin/chromium-browser";
-  }
+  options.launchOptions.executablePath = "/usr/bin/chromium-browser";
 
   const mimeType = params.mimeType;
 
