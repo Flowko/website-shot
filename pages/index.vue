@@ -548,7 +548,7 @@
           v-if="result && result.url"
           :src="result.url"
           width="100%"
-          style="height: 50vh"
+          style="height: 50vh;object-fit: cover;"
         />
       </div>
     </div>
