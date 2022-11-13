@@ -112,6 +112,10 @@ app.post("/screenshot", async (req, res) => {
     options.launchOptions.executablePath = "/usr/bin/chromium-browser";
   }
 
+  if (process.env.USER_AGENT && process.env.USER_AGENT.length > 0) {
+    options.userAgent = process.env.USER_AGENT;
+  }
+
   const mimeType = params.mimeType;
 
   if (urls && urls.length > 0 && params.type == "multiple-imgs") {
