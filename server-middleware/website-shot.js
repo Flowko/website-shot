@@ -97,6 +97,7 @@ app.post("/screenshot", async (req, res) => {
     launchOptions: {
       headless: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      ignoreDefaultArgs: ["--disable-extensions"],
       product: "chrome",
       waitUntil: "load",
     },
@@ -107,7 +108,9 @@ app.post("/screenshot", async (req, res) => {
     },
   };
 
-  options.launchOptions.executablePath = "/usr/bin/chromium-browser";
+  if (process.env.RUNNING_DOCKER === "1") {
+    options.launchOptions.executablePath = "/usr/bin/chromium-browser";
+  }
 
   const mimeType = params.mimeType;
 

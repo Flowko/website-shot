@@ -1,11 +1,11 @@
 # Dockerfile
-FROM node:16.18.1-alpine3.16
+FROM node:16.18.1-alpine
 
 # create destination directory
 WORKDIR /usr/src/website-shot
 
 # update and install dependency
-RUN apk add --no-cache chromium wqy-zenhei --repository http://nl.alpinelinux.org/alpine/edge/testing
+RUN apk add --no-cache git chromium wqy-zenhei --repository http://nl.alpinelinux.org/alpine/edge/testing
 
 # copy package.json and install dependencies
 COPY package*.json /usr/src/website-shot/
@@ -22,5 +22,6 @@ ENV NUXT_HOST 0.0.0.0
 ENV NUXT_PORT 3000
 ENV PASSWORD_PROTECT 0
 ENV PASSWORD null
+ENV RUNNING_DOCKER 1
 
 CMD [ "yarn", "start" ]
