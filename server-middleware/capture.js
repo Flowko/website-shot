@@ -152,10 +152,11 @@ const internalCaptureWebsite = async (input, options) => {
   let browser;
   let page;
   try {
-    browser = options._browser || (await puppeteer.launch(launchOptions));
+    browser = await puppeteer.launch(launchOptions);
+
     page = await browser.newPage();
 
-    if (options.blockAds) {
+    if (options.blockAds || process.env.BLOCK_ADS == "1") {
       const blocker = await PuppeteerBlocker.fromPrebuiltFull(fetch, {
         path: "engine.bin",
         read: fs.readFile,
