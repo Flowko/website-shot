@@ -3,17 +3,7 @@
     <div class="flex flex-col bg-[#FAFBFB] rounded-md shadow-lg">
       <input
         v-if="selectedType != 'multiple-imgs'"
-        class="
-          w-full
-          p-3
-          transition-all
-          ease-linear
-          delay-75
-          border-2
-          rounded-md
-          outline-none
-          focus:outline-none focus:border-primary-200 focus:border-dashed
-        "
+        class="w-full p-3 transition-all ease-linear delay-75 border-2 rounded-md outline-none focus:outline-none focus:border-primary-200 focus:border-dashed"
         @keyup.enter="generateScreenshot"
         placeholder="https://github.com/flowko..."
         type="url"
@@ -22,18 +12,7 @@
 
       <div class="flex items-center justify-center my-4 space-x-10">
         <div
-          class="
-            flex flex-col
-            items-center
-            justify-center
-            w-32
-            h-32
-            text-center
-            bg-gray-200
-            cursor-pointer
-            rounded-2xl
-            hover:bg-gray-300
-          "
+          class="flex flex-col items-center justify-center w-32 h-32 text-center bg-gray-200 cursor-pointer rounded-2xl hover:bg-gray-300"
           :class="{
             'border-primary-200 border-dashed border-2 shadow-md ':
               selectedType == type.value,
@@ -62,17 +41,7 @@
           :key="index"
         >
           <input
-            class="
-              w-full
-              p-3
-              transition-all
-              ease-linear
-              delay-75
-              border-2
-              rounded-md
-              outline-none
-              focus:outline-none focus:border-primary-200 focus:border-dashed
-            "
+            class="w-full p-3 transition-all ease-linear delay-75 border-2 rounded-md outline-none focus:outline-none focus:border-primary-200 focus:border-dashed"
             :placeholder="`URL - ${index}`"
             type="url"
             v-model="url.url"
@@ -548,7 +517,7 @@
           v-if="result && result.url"
           :src="result.url"
           width="100%"
-          style="height: 50vh;object-fit: cover;"
+          style="height: 50vh; object-fit: cover"
         />
       </div>
     </div>
@@ -597,10 +566,8 @@ export default {
           format: "resolution",
           landscape: false,
         },
-        script: `//console.log('hello world');`,
-        style: `/* .test {
-          color: #000;
-        } */`,
+        script: "",
+        style: "",
         urls: [
           {
             url: null,

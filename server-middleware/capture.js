@@ -344,7 +344,7 @@ const internalCaptureWebsiteCore = async (input, options, page, browser) => {
     );
   }
 
-  if (options.scripts) {
+  if (options.scripts && options.scripts.length > 0) {
     await Promise.all(
       options.scripts.map((script) =>
         page.addScriptTag({
@@ -352,9 +352,11 @@ const internalCaptureWebsiteCore = async (input, options, page, browser) => {
         })
       )
     );
+
+    await page.waitForNavigation();
   }
 
-  if (options.styles) {
+  if (options.styles && options.styles.length > 0) {
     await Promise.all(
       options.styles.map((style) =>
         page.addStyleTag({

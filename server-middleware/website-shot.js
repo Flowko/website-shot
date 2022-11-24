@@ -59,11 +59,11 @@ app.post("/screenshot", async (req, res) => {
   const styles = [];
   const scripts = [];
 
-  if (params.style) {
+  if (params.style && params.style.length > 0) {
     styles.push(params.style);
   }
 
-  if (params.script) {
+  if (params.script && params.script.length > 0) {
     scripts.push(params.script);
   }
 
