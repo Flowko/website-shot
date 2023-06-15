@@ -796,13 +796,14 @@ export default {
       this.params.size = `${this.params.width}x${this.params.height}`;
     },
     selectedType() {
-      this.params.url = null;
+      if(this.params.urls && this.params.url && this.selectedType === 'multiple-imgs') {
+        this.params.urls = [
+          {
+            url: this.params.url,
+          },
+        ];
+      }
       this.result = null;
-      this.params.urls = [
-        {
-          url: null,
-        },
-      ];
     },
   },
 };
