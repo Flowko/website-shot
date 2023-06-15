@@ -96,6 +96,7 @@ app.post("/screenshot", async (req, res) => {
         : false,
     launchOptions: {
       headless: true,
+      ignoreHTTPSErrors: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
       ignoreDefaultArgs: ["--disable-extensions"],
       product: "chrome",
