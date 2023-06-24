@@ -1,0 +1,6 @@
+.git
+.github
+.env.example
+node_modules
+pnpm-debug.log
+.nuxt
