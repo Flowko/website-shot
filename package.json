@@ -4,6 +4,7 @@
   "description": "Generate a full web-page screenshot, Website-shot provides rich interface to make any kind of web screenshots online for free with no limits.",
   "repository": "https://github.com/Flowko/website-shot",
   "license": "MIT",
+  "type": "module",
   "engines": {
     "node": ">=20"
   },
@@ -16,14 +17,16 @@
     "start": "nuxt start",
     "lint": "eslint .",
     "clean": "rm -rf node_modules pnpm-lock.yaml .nuxt && pnpm i",
-    "db:generate": "yarn prisma generate",
-    "db:push": "yarn prisma db push",
-    "db:drop": "yarn prisma db push --force-reset",
     "upgrade": "nuxt upgrade --force",
-    "studio": "yarn prisma studio --port 5556"
+    "db:generate": "pnpm prisma generate",
+    "db:push": "pnpm prisma db push",
+    "db:drop": "pnpm db:push --force-reset && pnpm db:seed && pnpm db:generate",
+    "studio": "pnpm prisma studio --port 5556",
+    "db:seed": "pnpm prisma db seed"
   },
   "devDependencies": {
     "@antfu/eslint-config": "0.39.5",
+    "@cliqz/adblocker-puppeteer": "^1.26.6",
     "@iconify-json/heroicons": "^1.1.11",
     "@iconify-json/octicon": "^1.1.44",
     "@iconify-json/simple-icons": "^1.1.57",
@@ -42,11 +45,15 @@
     "prisma": "^4.16.1",
     "puppeteer": "^20.7.3",
     "tailwindcss": "^3.3.2",
+    "ts-node": "^10.9.1",
     "ufo": "^1.1.2"
   },
   "eslintConfig": {
     "extends": [
       "plugin:tailwindcss/recommended"
     ]
+  },
+  "prisma": {
+    "seed": "node --experimental-specifier-resolution=node --loader ts-node/esm ./prisma/seed.ts"
   }
 }

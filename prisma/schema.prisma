@@ -10,9 +10,69 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Screenshots {
-  id        Int      @id @default(autoincrement())
-  url       String
+model Screenshot {
+  id Int @id @default(autoincrement())
+
+  url      String  @db.VarChar(1000)
+  fileName String  @db.VarChar(1000)
+  isPublic Boolean @default(false)
+
+  configId Int
+  config   Config @relation(fields: [configId], references: [id])
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Config {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  fullPage         Boolean      @default(false)
+  darkMode         Boolean      @default(false)
+  format           Format       @default(png)
+  timeout          Int          @default(60)
+  // delay            Int          @default(1)
+  width            Int          @default(1920)
+  height           Int          @default(1080)
+  scaleFactor      Int          @default(1)
+  save             SaveProvider @default(local)
+  isPdf            Boolean      @default(false)
+  pdfLandscape     Boolean      @default(false)
+  pdfFormat        PdfFormat    @default(resolution)
+  jsScript         String?      @default("") @db.VarChar(100000)
+  cssStyle         String?      @default("") @db.VarChar(100000)
+  keepUrlStructure Boolean      @default(false)
+  blockAds         Boolean      @default(true)
+  jsEnabled        Boolean      @default(true)
+
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  Screenshot Screenshot[]
+}
+
+enum Format {
+  png
+  jpeg
+  webp
+}
+
+enum SaveProvider {
+  supabase
+  local
+}
+
+enum PdfFormat {
+  resolution
+  a0
+  a1
+  a2
+  a3
+  a4
+  a5
+  a6
+  legal
+  letter
+  tabloid
+  ledger
 }
