@@ -1,5 +1,6 @@
 import type { Browser, Page, PuppeteerLaunchOptions } from 'puppeteer'
 import puppeteer from 'puppeteer'
+import { parseURL } from 'ufo'
 import { prisma } from '@/prisma'
 
 export async function load(url: string, configId: number | null = null) {
@@ -45,7 +46,49 @@ export async function load(url: string, configId: number | null = null) {
     if (config.blockAds)
       removeAds(page)
 
-    return await capture(url, config, page)
+    const buffer = await capture(url, config, page)
+    const urlObj = parseURL(url)
+    let fileExtension = 'png'
+
+    switch (buffer.type) {
+      case 'application/pdf':
+        fileExtension = 'pdf'
+        break
+      case 'image/webp':
+        fileExtension = 'webp'
+        break
+      case 'image/jpeg':
+        fileExtension = 'jpg'
+        break
+      case 'image/png':
+        fileExtension = 'png'
+        break
+      default:
+        fileExtension = 'png'
+        break
+    }
+
+    const fileName = `${urlObj.host}-${Date.now()}.${
+      fileExtension
+    }`
+
+    const screenshot = await prisma.screenshot.create({
+      data: {
+        url,
+        fileName,
+        configId: config.id,
+        buffer: buffer.buffer,
+        type: buffer.type,
+      },
+    })
+
+    if (!screenshot)
+      throw new Error('Screenshot creation failed')
+
+    if (screenshot && screenshot.id)
+      console.log(`Screenshot ${screenshot.id} created`)
+
+    return buffer
   }
   catch (error) {
     console.error(error)
