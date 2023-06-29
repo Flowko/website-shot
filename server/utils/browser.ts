@@ -1,15 +1,13 @@
-import type { PuppeteerLaunchOptions } from 'puppeteer'
+import type { Browser, Page, PuppeteerLaunchOptions } from 'puppeteer'
 import puppeteer from 'puppeteer'
 import { prisma } from '@/prisma'
 
 export async function load(url: string, configId: number | null = null) {
-  let browser, page
+  let browser: Browser | null = null
+  let page: Page | null = null
 
   if (!url)
     throw new Error('URL not found')
-
-  // if (!configId)
-  // throw new Error('Config ID not found')
 
   const config = await prisma.config.findUnique({
     where: configId
@@ -25,26 +23,29 @@ export async function load(url: string, configId: number | null = null) {
     throw new Error('Config not found')
 
   const launchOptions: PuppeteerLaunchOptions = {
-    headless: false,
-    slowMo: 100,
+    headless: 'new',
     ignoreHTTPSErrors: true,
     args: [
       '--no-sandbox',
       '--disable-setuid-sandbox',
     ],
     ignoreDefaultArgs: ['--disable-extensions'],
-    product: 'chrome', // TODO: add an option to use other browsers
     waitForInitialPage: true,
+    devtools: false,
+    product: 'chrome', // TODO: add an option to choose browser
   }
 
   try {
-    browser = await puppeteer.launch(launchOptions)
+    if (!browser)
+      browser = await puppeteer.launch(launchOptions)
+
     page = await browser.newPage()
 
+    // TODO: if this enabled it will cause a lot of problems to load urls. find a way to fix it
     if (config.blockAds)
       removeAds(page)
 
-    return await capture(url, config, page, browser)
+    return await capture(url, config, page)
   }
   catch (error) {
     console.error(error)
