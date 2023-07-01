@@ -72,21 +72,7 @@ export async function load(url: string, configId: number | null = null) {
       fileExtension
     }`
 
-    const screenshot = await prisma.screenshot.create({
-      data: {
-        url,
-        fileName,
-        configId: config.id,
-        buffer: buffer.buffer,
-        type: buffer.type,
-      },
-    })
-
-    if (!screenshot)
-      throw new Error('Screenshot creation failed')
-
-    if (screenshot && screenshot.id)
-      console.log(`Screenshot ${screenshot.id} created`)
+    await createScreenshot(url, fileName, config.id, buffer.buffer, buffer.type)
 
     return buffer
   }

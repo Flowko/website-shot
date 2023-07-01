@@ -34,7 +34,7 @@ model Config {
   darkMode         Boolean      @default(false)
   format           Format       @default(png)
   timeout          Int          @default(60)
-  // delay            Int          @default(1)
+  delay            Int          @default(1)
   width            Int          @default(1920)
   height           Int          @default(1080)
   scaleFactor      Int          @default(1)

@@ -6,6 +6,8 @@ async function createDefaultConfig(config: {
   const configData = await prisma.config.create({
     data: {
       name: config.name,
+      delay: 5,
+      blockAds: false,
     },
   })
 

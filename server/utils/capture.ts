@@ -46,7 +46,7 @@ export async function capture(url: string, config: Config, page: Page) {
 
   await page.goto(url, {
     timeout: timeoutInMilliseconds,
-    waitUntil: 'load',
+    waitUntil: 'networkidle2',
   })
 
   await page.setViewport(viewport)
@@ -61,6 +61,9 @@ export async function capture(url: string, config: Config, page: Page) {
   // add styles
   if (config.cssStyle)
     await page.addStyleTag({ content: config.cssStyle })
+
+  if (config.delay > 1)
+    await page.waitForTimeout(config.delay * 1000)
 
   if (config.fullPage) {
     await scrollPageToBottom(page, {
