@@ -5,7 +5,6 @@ export default defineNuxtConfig({
   modules: [
     'nuxt-scheduler',
     '@nuxt/devtools',
-    // 'C:/Users/youne/Documents/Projects/devtools/local',
     'nuxt-icon',
     '@nuxthq/ui',
     'nuxt-headlessui',
