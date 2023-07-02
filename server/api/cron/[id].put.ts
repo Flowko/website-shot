@@ -1,3 +1,5 @@
+import type { Cron } from '@prisma/client'
+
 export default defineEventHandler(async (event) => {
   try {
     const id = event.context.params && event.context.params.id ? Number.parseInt(event.context.params.id) : null
@@ -9,9 +11,11 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    const screenshot = await deleteScreenshot(id)
+    const cronObj = await readBody(event) as Cron
 
-    if (!screenshot) {
+    const cron = await updateCron(id, cronObj)
+
+    if (!cron) {
       throw createError({
         statusCode: 400,
         statusMessage: 'Something went wrong',
@@ -20,7 +24,7 @@ export default defineEventHandler(async (event) => {
 
     return {
       statusCode: 200,
-      data: `Screenshot with id ${id} deleted successfully`,
+      data: cron,
     }
   }
   catch (error) {

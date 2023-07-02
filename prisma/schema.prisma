@@ -24,6 +24,8 @@ model Screenshot {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  Cron      Cron?    @relation(fields: [cronId], references: [id])
+  cronId    Int?
 }
 
 model Config {
@@ -51,6 +53,24 @@ model Config {
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
   Screenshot Screenshot[]
+  Cron       Cron[]
+}
+
+model Cron {
+  id Int @id @default(autoincrement())
+
+  name        String
+  schedule    String
+  urls        String[]
+  configId    Int
+  config      Config       @relation(fields: [configId], references: [id])
+  screenshots Screenshot[]
+
+  runs    Int     @default(0)
+  running Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum Format {

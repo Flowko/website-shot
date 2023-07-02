@@ -3,7 +3,7 @@ import puppeteer from 'puppeteer'
 import { parseURL } from 'ufo'
 import { prisma } from '@/prisma'
 
-export async function load(url: string, configId: number | null = null) {
+export async function load(url: string, configId: number | null = null, cronId: number | null = null) {
   let browser: Browser | null = null
   let page: Page | null = null
 
@@ -72,7 +72,7 @@ export async function load(url: string, configId: number | null = null) {
       fileExtension
     }`
 
-    await createScreenshot(url, fileName, config.id, buffer.buffer, buffer.type)
+    await createScreenshot(url, fileName, config.id, buffer.buffer, buffer.type, cronId)
 
     return buffer
   }

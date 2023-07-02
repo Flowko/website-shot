@@ -1,8 +1,17 @@
 export default defineEventHandler(async (event) => {
   try {
-    const screenshots = await getAllScreenshots()
+    const id = event.context.params && event.context.params.id ? Number.parseInt(event.context.params.id) : null
 
-    if (!screenshots) {
+    if (!id) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: 'id is required',
+      })
+    }
+
+    const cron = await deleteCron(id)
+
+    if (!cron) {
       throw createError({
         statusCode: 400,
         statusMessage: 'Something went wrong',
@@ -11,7 +20,7 @@ export default defineEventHandler(async (event) => {
 
     return {
       statusCode: 200,
-      data: screenshots,
+      data: `Cron with id ${id} deleted successfully`,
     }
   }
   catch (error) {

@@ -1,8 +1,8 @@
 export default defineEventHandler(async (event) => {
   try {
-    const screenshots = await getAllScreenshots()
+    const crons = await getAllCrons()
 
-    if (!screenshots) {
+    if (!crons) {
       throw createError({
         statusCode: 400,
         statusMessage: 'Something went wrong',
@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
 
     return {
       statusCode: 200,
-      data: screenshots,
+      data: crons,
     }
   }
   catch (error) {

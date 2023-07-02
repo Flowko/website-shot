@@ -32,8 +32,8 @@ export async function deleteScreenshot(id: number) {
   return screenshot
 }
 
-export async function createScreenshot(url: string, fileName: string, configId: number, buffer: Buffer, type: string) {
-  const alreadyExists = checkSameBuffer(buffer)
+export async function createScreenshot(url: string, fileName: string, configId: number, buffer: Buffer, type: string, cronId: number | null = null) {
+  const alreadyExists = await checkSameBuffer(buffer)
 
   if (alreadyExists)
     return alreadyExists
@@ -45,6 +45,7 @@ export async function createScreenshot(url: string, fileName: string, configId: 
       configId,
       buffer,
       type,
+      cronId,
     },
   })
 
