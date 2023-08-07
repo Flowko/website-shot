@@ -70,8 +70,6 @@ export async function updateCron(id: number, cron: Cron) {
     const newTime = new CronTime(cron.schedule)
 
     if (cronJob.cronTime.source !== cron.schedule) {
-      console.log('Cron schedule changed')
-
       cronJob.setTime(newTime)
       cronJob.start()
     }

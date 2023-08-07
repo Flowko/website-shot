@@ -1,10 +1,11 @@
 {
   "name": "website-shot",
+  "type": "module",
   "version": "1.0.0",
   "description": "Generate a full web-page screenshot, Website-shot provides rich interface to make any kind of web screenshots online for free with no limits.",
-  "repository": "https://github.com/Flowko/website-shot",
+  "author": "Younes Barrad <younesbarraddev@gmail.com> (https://github.com/Flowko/)",
   "license": "AGPL-3.0-only",
-  "type": "module",
+  "repository": "https://github.com/Flowko/website-shot",
   "engines": {
     "node": ">=20"
   },
@@ -15,14 +16,16 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "start": "nuxt start",
-    "lint": "eslint .",
+    "lint": "eslint --ext .js,.vue,.ts,.tsx .",
+    "lint:fix": "eslint --fix --ext .js,.vue,.ts,.tsx .",
     "clean": "rm -rf node_modules pnpm-lock.yaml .nuxt && pnpm i",
     "upgrade": "nuxt upgrade --force",
     "db:generate": "pnpm prisma generate",
     "db:push": "pnpm prisma db push",
     "db:drop": "pnpm db:push --force-reset && pnpm db:seed && pnpm db:generate",
     "studio": "pnpm prisma studio --port 5556",
-    "db:seed": "pnpm prisma db seed"
+    "db:seed": "pnpm prisma db seed",
+    "release": "changelogen --release"
   },
   "devDependencies": {
     "@antfu/eslint-config": "0.40.2",
@@ -39,6 +42,7 @@
     "@types/node": "^20.4.8",
     "@vueuse/core": "^10.3.0",
     "@vueuse/nuxt": "^10.3.0",
+    "changelogen": "^0.5.4",
     "cron": "^2.4.0",
     "eslint": "8.46.0",
     "nuxt": "^3.6.5",
