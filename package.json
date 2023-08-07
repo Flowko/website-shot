@@ -2,7 +2,7 @@
   "name": "website-shot",
   "type": "module",
   "version": "1.0.0",
-  "description": "Generate a full web-page screenshot, Website-shot provides rich interface to make any kind of web screenshots online for free with no limits.",
+  "description": "📸 Generate a full web-page screenshot, Website-shot provides rich interface to make any kind of web screenshots online for free with no limits.",
   "author": "Younes Barrad <younesbarraddev@gmail.com> (https://github.com/Flowko/)",
   "license": "AGPL-3.0-only",
   "repository": "https://github.com/Flowko/website-shot",
