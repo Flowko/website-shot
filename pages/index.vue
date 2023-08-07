@@ -2,8 +2,6 @@
 useHead({
   title: 'Home',
 })
-
-const isOpen = ref(false)
 </script>
 
 <template>

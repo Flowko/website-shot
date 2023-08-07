@@ -6,7 +6,7 @@ export default <Partial<Config>> {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter var', ...defaultTheme.fontFamily.sans],
+        sans: ['Inter', 'Inter fallback', ...defaultTheme.fontFamily.sans],
       },
     },
   },

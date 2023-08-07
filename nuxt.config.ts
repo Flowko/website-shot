@@ -8,6 +8,8 @@ export default defineNuxtConfig({
     '@nuxthq/ui',
     'nuxt-headlessui',
     '@vueuse/nuxt',
+    '@nuxtjs/fontaine',
+    '@nuxtjs/google-fonts',
   ],
 
   typescript: {
@@ -17,6 +19,16 @@ export default defineNuxtConfig({
   ui: {
     global: true,
     icons: ['heroicons', 'simple-icons', 'octicon'],
+  },
+
+  googleFonts: {
+    families: {
+      Inter: [400, 500, 600, 700],
+    },
+  },
+
+  tailwindcss: {
+    viewer: false,
   },
 
 })
