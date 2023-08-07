@@ -9,9 +9,5 @@ const isOpen = ref(false)
 <template>
   <div>
     home
-
-    <UButton @click="isOpen = true">
-      settings
-    </UButton>
   </div>
 </template>

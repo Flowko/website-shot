@@ -3,7 +3,6 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 
   modules: [
-    'nuxt-scheduler',
     '@nuxt/devtools',
     'nuxt-icon',
     '@nuxthq/ui',

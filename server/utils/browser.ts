@@ -1,7 +1,10 @@
 import type { Browser, Page, PuppeteerLaunchOptions } from 'puppeteer'
-import puppeteer from 'puppeteer'
+import puppeteer from 'puppeteer-extra'
+import StealthPlugin from 'puppeteer-extra-plugin-stealth'
 import { parseURL } from 'ufo'
 import { prisma } from '@/prisma'
+
+puppeteer.use(StealthPlugin())
 
 export async function load(url: string, configId: number | null = null, cronId: number | null = null) {
   let browser: Browser | null = null

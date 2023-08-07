@@ -1,3 +1,5 @@
+import { CronTime } from 'cron'
+import { addCronJob, jobs } from '../../plugins/scheduler'
 import type { Cron } from '@/prisma'
 import { prisma } from '@/prisma'
 
@@ -14,6 +16,8 @@ export async function createCron(cron: Cron) {
   if (!cronObj)
     throw new Error('Cron creation failed')
 
+  await addCronJob(cronObj)
+
   return cronObj
 }
 
@@ -27,10 +31,26 @@ export async function deleteCron(id: number) {
   if (!cronObj)
     throw new Error('Cron deletion failed')
 
+  const cronJob = jobs.find(c => c.cronTime.source === cronObj.schedule)
+
+  if (cronJob) {
+    cronJob.stop()
+    jobs.splice(jobs.indexOf(cronJob), 1)
+  }
+
   return cronObj
 }
 
 export async function updateCron(id: number, cron: Cron) {
+  const oldCron = await prisma.cron.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!oldCron)
+    throw new Error('Cron not found')
+
   const cronObj = await prisma.cron.update({
     where: {
       id,
@@ -43,6 +63,32 @@ export async function updateCron(id: number, cron: Cron) {
       running: cron.running,
     },
   })
+
+  const cronJob = jobs.find(c => c.cronTime.source === oldCron.schedule)
+
+  if (cronJob) {
+    const newTime = new CronTime(cron.schedule)
+
+    if (cronJob.cronTime.source !== cron.schedule) {
+      console.log('Cron schedule changed')
+
+      cronJob.setTime(newTime)
+      cronJob.start()
+    }
+
+    if (cron.running !== cronJob.running) {
+      if (cron.running)
+        cronJob.start()
+      else
+        cronJob.stop()
+    }
+
+    if (cron.urls !== oldCron.urls) {
+      cronJob.stop()
+      cronJob.setTime(newTime)
+      cronJob.start()
+    }
+  }
 
   if (!cronObj)
     throw new Error('Cron update failed')

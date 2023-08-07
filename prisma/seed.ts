@@ -8,7 +8,7 @@ async function main() {
     },
   })
 
-  console.log(`⚙️ upserted config ${configData.id} with name ${configData.name}`)
+  console.warn(`⚙️ upserted config ${configData.id} with name ${configData.name}`)
 
   const cronData = await prisma.cron.create({
     data: {
@@ -17,13 +17,12 @@ async function main() {
       running: true,
       configId: configData.id,
       urls: [
-        'https://github.com/jurassicjs/nuxt-scheduler',
         'https://github.com/Flowko/website-shot',
       ],
     },
   })
 
-  console.log(`⚙️ upserted cron ${cronData.id} with name ${cronData.name}`)
+  console.warn(`⚙️ upserted cron ${cronData.id} with name ${cronData.name}`)
 }
 
 main().then(() => {

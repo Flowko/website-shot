@@ -28,6 +28,8 @@ export default defineEventHandler(async (event) => {
       return buffer
   }
   catch (error) {
+    console.error(error)
+
     throw createError({
       statusCode: 500,
       statusMessage: 'Internal Server Error',
