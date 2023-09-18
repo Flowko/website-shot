@@ -1,0 +1,25 @@
+<script setup lang="ts">
+defineProps<{ color: { value: string; hex: string }; selected: { value: string } | undefined }>()
+defineEmits(['select'])
+</script>
+
+<template>
+  <UTooltip :text="color.value" class="capitalize" :open-delay="500">
+    <UButton
+      color="transparent"
+      square
+      :ui="{
+        color: {
+          transparent: {
+            solid: 'bg-gray-100 dark:bg-gray-800',
+            ghost: 'hover:bg-gray-50 dark:hover:bg-gray-800/50',
+          },
+        },
+      }"
+      :variant="selected ? color.value === selected.value ? 'solid' : 'ghost' : 'ghost'"
+      @click.stop.prevent="$emit('select')"
+    >
+      <span class="inline-block w-3 h-3 rounded-full" :style="{ backgroundColor: color.hex }" />
+    </UButton>
+  </UTooltip>
+</template>

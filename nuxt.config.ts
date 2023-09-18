@@ -1,3 +1,25 @@
+const exludedColors = ['red',
+  'orange',
+  'amber',
+  'yellow',
+  'lime',
+  'green',
+  'emerald',
+  'teal',
+  'cyan',
+  'sky',
+  'blue',
+  'indigo',
+  'violet',
+  'purple',
+  'fuchsia',
+  'pink',
+  'rose',
+  'light-blue',
+  'warm-gray',
+  'true-gray',
+  'cool-gray',
+  'blue-gray']
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
@@ -25,6 +47,7 @@ export default defineNuxtConfig({
   ui: {
     global: true,
     icons: ['heroicons', 'simple-icons', 'octicon', 'solar'],
+    safelistColors: exludedColors,
   },
 
   googleFonts: {
