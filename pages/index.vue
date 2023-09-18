@@ -1,11 +1,10 @@
 <script setup lang="ts">
-useHead({
-  title: 'Home',
-})
+
+
 </script>
 
 <template>
-  <div>
-    home
+  <div class="text-center flex h-[calc(100vh-170px)] w-full flex-col items-center justify-center ">
+    <ConfigEmpty />
   </div>
 </template>

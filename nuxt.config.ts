@@ -5,7 +5,7 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/devtools',
     'nuxt-icon',
-    '@nuxthq/ui',
+    '@nuxt/ui',
     'nuxt-headlessui',
     '@vueuse/nuxt',
     '@nuxtjs/fontaine',
@@ -16,9 +16,15 @@ export default defineNuxtConfig({
     shim: false,
   },
 
+  components: {
+    dirs: [
+      '~/components/',
+    ],
+  },
+
   ui: {
     global: true,
-    icons: ['heroicons', 'simple-icons', 'octicon'],
+    icons: ['heroicons', 'simple-icons', 'octicon', 'solar'],
   },
 
   googleFonts: {

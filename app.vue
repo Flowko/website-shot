@@ -14,13 +14,30 @@ useHead({
   ],
   htmlAttrs: {
     lang: 'en',
+    class: 'h-full outline-none',
   },
   bodyAttrs: {
-    class: 'antialiased font-sans text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-900',
+    class: 'antialiased font-sans text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-900 h-full overflow-hidden outline-none',
   },
 })
 </script>
 
 <template>
-  <NuxtPage />
+  <div class="h-full">
+    <div class="h-full">
+      <div class="flex h-full">
+        <LayoutSidebar />
+        <NuxtLayout>
+          <NuxtPage />
+        </NuxtLayout>
+        <UNotifications />
+      </div>
+    </div>
+  </div>
 </template>
+
+<style lang="scss">
+#__nuxt {
+  height: 100%;
+}
+</style>
