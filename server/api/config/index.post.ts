@@ -8,13 +8,11 @@ export default defineEventHandler(async (event) => {
         statusMessage: 'Bad Request',
       })
     }
-      
 
     const response = await createConfig(configName)
 
     return {
-      statusCode: 200,
-      data: response,
+      id: response.id,
     }
   }
   catch (error) {
